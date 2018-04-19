@@ -2,16 +2,17 @@ package com.example.student.crackingtablet;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.GridView;
@@ -20,14 +21,41 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private final String wcURL = "70.12.114.144/wc";
+    private final String wcURL = "http://70.12.114.144/wc";
 
     private LinearLayout l_home, l_chart, l_management, container_h, container_m;
     private WebView webView_chart;
+    private boolean flag = true;
+    private ReceiveData connectionReceiver;
+
+    Runnable r = new Runnable() {
+        @Override
+        public void run() {
+            while(flag) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //좌표를 가져오기
+                Log.d("connectionReceiver ::" , "run");
+                connectionReceiver = new ReceiveData(wcURL+"/connection.do");
+                connectionReceiver.addParameter("?comm=t");
+                try {
+                    connectionReceiver.execute().get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +156,7 @@ public class MainActivity extends AppCompatActivity
 
         webView_chart.setWebViewClient(new WebViewClient());
         webView_chart.getSettings().setJavaScriptEnabled(true);
-        webView_chart.loadUrl(wcURL);
+        webView_chart.loadUrl(wcURL + "chart");
 
         l_home.setVisibility(View.VISIBLE);
         l_chart.setVisibility(View.INVISIBLE);
@@ -136,10 +164,21 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void UpdateHomeList() {
-        // Get online userlist from database
         ArrayList<User> list = new ArrayList<>();
-        list.add(new User("fksdud456", "1234", "란영", "20180808", R.drawable.heart, 1));
-        UserAdapter userAdapter = new UserAdapter(list,this, container_h);
+        ReceiveData receiveData = new ReceiveData(wcURL + "/connection.do");
+        receiveData.addParameter("?comm=t");
+
+        try {
+            String connectedIds = receiveData.execute().get();
+            Toast.makeText(this, connectedIds, Toast.LENGTH_LONG).show();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        UserAdapter userAdapter = new UserAdapter(list, this, container_h);
         ListView listView = findViewById(R.id.list_manage);
         listView.setAdapter(userAdapter);
     }
@@ -147,15 +186,24 @@ public class MainActivity extends AppCompatActivity
     private void UpdateManagementList() {
         // Get online userlist from database
         ArrayList<User> list = new ArrayList<>();
-        list.add(new User("fksdud456", "1234", "란영", "20180808", R.drawable.heart, 1));
-        list.add(new User("dkdkdk234", "1234", "란영2", "20180809", R.drawable.heart, 0));
-        UserGridAdapter userGridAdapter = new UserGridAdapter(list,this, container_m);
+        ReceiveData receiveData = new ReceiveData(wcURL + "/alluser.do");
+        receiveData.addParameter("?comm=t");
+        try {
+            String allUser = receiveData.execute().get();
+            Util.getListFromJSON(list, allUser);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        UserGridAdapter userGridAdapter = new UserGridAdapter(list, this, container_m);
         GridView gridView = findViewById(R.id.grid_mange);
-        gridView .setAdapter(userGridAdapter);
+        gridView.setAdapter(userGridAdapter);
     }
 
     public void onDisconnectUser(View v) {
-        Toast.makeText(this, "Disconnect USER" , Toast.LENGTH_SHORT).show();
-    }
 
+        Toast.makeText(this, "Disconnect USER", Toast.LENGTH_SHORT).show();
+    }
 }
