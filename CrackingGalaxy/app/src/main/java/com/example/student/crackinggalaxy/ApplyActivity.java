@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -106,8 +107,14 @@ public class ApplyActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
-
+            Log.d("check",s);
+            if(s.equals("1")){
+                Toast.makeText(ApplyActivity.this, "Apply Success", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            else if(s.equals("0")){
+                Toast.makeText(ApplyActivity.this, "Apply Fail, Please try again", Toast.LENGTH_SHORT).show();
+            }
         }
     }
-
 }
