@@ -3,20 +3,31 @@ package com.hw.vo;
 public class User {	
 	
 	String id;
-	String pwd;
+	String password;
 	String name;
 	int manager;
-	String rdate;
+	String registdate;
 	
 	public User() {
 	}
+	
+	public User(String id) {
+		this.id = id;
+
+		
+	}
+	public User(String id, String pwd) {
+		this.id = id;
+		this.password = pwd;
+		
+	}
+	
 	public User(String id, String pwd, String name) {
 		this.id = id;
-		this.pwd = pwd;
+		this.password = pwd;
 		this.name = name;
 	}
 	
-	//img 나중에 만들기
 	public String getId() {
 		return id;
 	}
@@ -24,10 +35,10 @@ public class User {
 		this.id = id;
 	}
 	public String getPwd() {
-		return pwd;
+		return password;
 	}
 	public void setPwd(String pwd) {
-		this.pwd = pwd;
+		this.password = pwd;
 	}
 	public String getName() {
 		return name;
@@ -41,11 +52,19 @@ public class User {
 	public void setManager(int manager) {
 		this.manager = manager;
 	}
-	public String getRdate() {
-		return rdate;
+	
+	
+	public String getRegistdate() {
+		return registdate;
 	}
-	public void setRdate(String rdate) {
-		this.rdate = rdate;
-	}	
+
+	public void setRegistdate(String registdate) {
+		this.registdate = registdate;
+	}
+
+	@Override
+	public String toString() {
+		return id+" "+password+" "+name+" "+manager+" "+registdate;
+	}
 
 }

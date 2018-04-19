@@ -1,5 +1,7 @@
 package com.hw.user;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +18,16 @@ public class UserDao implements Dao<User, String> {
 	@Override
 	public void insert(User t) {
 		mapper.insert(t);
+	}
+	
+	@Override
+	public User select(User t) {
+		return mapper.select(t);
+	}
+
+	@Override
+	public List<User> selectAll() {
+		return mapper.selectAll();
 	}
 
 }

@@ -1,6 +1,8 @@
 package com.hw.user;
 
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
@@ -13,7 +15,7 @@ import com.hw.vo.User;
 @Service("userBiz")
 public class UserBiz implements Biz<User, String>{
 
-	@Resource(name="userDao") //Libraries¿¡ Apache TomcatÀ» µî·ÏÇÏÁö ¾ÊÀ¸¸é ¿À·ù°¡ ³¯ ¼ö ÀÖ´Ù.
+	@Resource(name="userDao") //Librariesï¿½ï¿½ Apache Tomcatï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½.
 	Dao<User, String> dao;
 	
 	public UserBiz() {
@@ -25,5 +27,16 @@ public class UserBiz implements Biz<User, String>{
 	public void register(User t) {
 		dao.insert(t);
 		//dao.insert(t);
+	}
+	
+	@Override
+	public User login(User t) {
+		return dao.select(t);
+		//dao.insert(t);
+	}
+	
+	@Override
+	public List<User> selectAll() {
+		return dao.selectAll();		
 	}
 }
