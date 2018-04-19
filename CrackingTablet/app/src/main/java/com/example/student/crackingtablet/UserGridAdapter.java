@@ -70,7 +70,7 @@ public class UserGridAdapter extends BaseAdapter {
             vw.setBackgroundResource(R.color.colorPrimaryDark);
         }
         else if(user.getConn() == 0) {
-            vw.setBackgroundResource(R.color.common_google_signin_btn_text_light_pressed);
+            vw.setBackgroundResource(R.color.common_google_signin_btn_text_light_disabled);
         }
         else if(user.getConn() == 1){
             vw.setBackgroundResource(R.color.colorAccent);
