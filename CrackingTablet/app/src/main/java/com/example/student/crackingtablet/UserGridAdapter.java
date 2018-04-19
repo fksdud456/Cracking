@@ -1,6 +1,7 @@
 package com.example.student.crackingtablet;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,16 +12,17 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class UserAdapter extends BaseAdapter {
+public class UserGridAdapter extends BaseAdapter {
     ArrayList<User> list;
     Context context;
     LinearLayout container;
+    int status;
 
-    public UserAdapter() {
+    public UserGridAdapter() {
 
     }
 
-    public UserAdapter(ArrayList<User> list, Context context, LinearLayout container) {
+    public UserGridAdapter(ArrayList<User> list, Context context, LinearLayout container) {
         this.list = list;
         this.context = context;
         this.container = container;
@@ -46,23 +48,39 @@ public class UserAdapter extends BaseAdapter {
         View vw = null;
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        vw = inflater.inflate(R.layout.user_home, container, true);
+        vw = inflater.inflate(R.layout.user_management, container, true);
 
-        ImageView img = vw.findViewById(R.id.imageView_profile_h);
-        TextView id = vw.findViewById(R.id.tv_id_h);
-        TextView name = vw.findViewById(R.id.tv_name_h);
-        TextView date = vw.findViewById(R.id.tv_loc_h);
+        ImageView img = vw.findViewById(R.id.imageView_profile_m);
+        TextView id = vw.findViewById(R.id.tv_id_m);
+        TextView name = vw.findViewById(R.id.tv_name_m);
+        TextView date = vw.findViewById(R.id.tv_loc_m);
 
         User user = list.get(i);
         id.setText(user.getId());
         name.setText(user.getName());
         date.setText(user.getRdate());
-        int imgNum = R.drawable.heart;
 
+        int imgNum = R.drawable.heart;
         if (user.getImg() != 0)
             imgNum = user.getImg();
 
         img.setImageResource(imgNum);
+
+        if(status == 1) {
+            vw.setBackgroundResource(R.color.colorPrimaryDark);
+        }
+        else if(user.getConn() == 0) {
+            vw.setBackgroundResource(R.color.common_google_signin_btn_text_light_pressed);
+        }
+        else if(user.getConn() == 1){
+            vw.setBackgroundResource(R.color.colorAccent);
+        }
         return vw;
+    }
+
+    public void setItemStatus(int i, int status) {
+        User user = list.get(i);
+        user.setConn(status);
+        list.set(i, user);
     }
 }
