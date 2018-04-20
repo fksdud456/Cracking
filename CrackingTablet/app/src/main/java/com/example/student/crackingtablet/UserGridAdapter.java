@@ -4,10 +4,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,12 +21,13 @@ public class UserGridAdapter extends BaseAdapter {
     Context context;
     LinearLayout container;
     int status;
+    ImageButton btn_disconnec;
 
     public UserGridAdapter() {
 
     }
 
-    public UserGridAdapter(ArrayList<User> list, Context context, LinearLayout container) {
+    public UserGridAdapter(ArrayList<User> list, final Context context, LinearLayout container) {
         this.list = list;
         this.context = context;
         this.container = container;
@@ -46,10 +50,12 @@ public class UserGridAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        View vw = null;
-
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        vw = inflater.inflate(R.layout.user_management, container, true);
+        View vw = inflater.inflate(R.layout.user_management, container, true);
+
+        btn_disconnec = vw.findViewById(R.id.btn_disconnect);
+        setListner();
+
 
         ImageView img = vw.findViewById(R.id.imageView_profile_m);
         TextView id = vw.findViewById(R.id.tv_id_m);
@@ -84,6 +90,14 @@ public class UserGridAdapter extends BaseAdapter {
         User user = list.get(i);
         user.setConn(status);
         list.set(i, user);
+    }
 
+    public void setListner() {
+        btn_disconnec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(context.getApplicationContext(), "Sdfjhsdjfsad", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
