@@ -39,7 +39,7 @@
         android:orientation="horizontal">
 
         <GridView
-            android:id="@+id/grid_mange"
+            android:id="@+id/grid_manage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:numColumns="2" />

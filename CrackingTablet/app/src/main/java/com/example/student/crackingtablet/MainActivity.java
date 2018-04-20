@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     private final String TAG = "MainActivity:::";
-    private final String wcURL = "http://70.12.114.144/wc";
+    private final String wcURL = "http://70.12.114.150/wc";
     private LinearLayout l_home, l_chart, l_management, l_map, container_h, container_m;
     private WebView webView_chart;
     private GoogleMap mMap;
@@ -60,6 +61,10 @@ public class MainActivity extends AppCompatActivity
     private boolean flag = true;
     private ReceiveData connectionReceiver;
     String id;
+    UserGridAdapter gridAdapter;
+    GridView gridView;
+
+
     Runnable r = new Runnable() {
         @Override
         public void run() {
@@ -113,7 +118,7 @@ public class MainActivity extends AppCompatActivity
         connService = new Intent(this, ConnectionService.class);
         connService.putExtra("command", "show");
         startService(connService);
-
+        gridView = findViewById(R.id.grid_manage);
         first = true;
         makeUI();
         first = false;
@@ -295,12 +300,21 @@ public class MainActivity extends AppCompatActivity
 
     public void onDisconnectUser(View v) {
         Toast.makeText(this, "Disconnect USER", Toast.LENGTH_SHORT).show();
-
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                gridAdapter = new UserGridAdapter();
+                User user = (User)gridAdapter.getItem(position);
+                Toast.makeText(MainActivity.this, "select position : "+position,Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "useId : "+user.getId(),Toast.LENGTH_LONG).show();
+                id=user.getId();
+            }
+        });
         //User user = new User();
         //user.getId();
-        TextView tv = findViewById(R.id.tv_id_m);
+
         //id = String.valueOf(v.getId());
-        id = tv.getText().toString();
+
         Log.d("checkid#####", id);
 
         AlertDialog dialog;
@@ -310,7 +324,7 @@ public class MainActivity extends AppCompatActivity
         builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                String address = "http://70.12.114.114/wc/disconnect.do?comm=s&id=" + id;
+                String address = "http://70.12.114.150/wc/disconnect.do?comm=s&id=" + id;
                 URL url = null;
                 HttpURLConnection con = null;
                 try {
@@ -326,7 +340,6 @@ public class MainActivity extends AppCompatActivity
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
         });
         builder.setNegativeButton("no", new DialogInterface.OnClickListener() {
@@ -337,12 +350,8 @@ public class MainActivity extends AppCompatActivity
         });
         dialog = builder.create();
         dialog.show();
-
-
         Toast.makeText(this, "Disconnect USER", Toast.LENGTH_SHORT).show();
     }
-
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
