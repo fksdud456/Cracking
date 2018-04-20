@@ -7,6 +7,8 @@ public class User {
     String name;
     int manager;
     String rdate;
+    int img;
+    int conn;
 
     public User() {
     }
@@ -15,6 +17,15 @@ public class User {
         this.id = id;
         this.pwd = pwd;
         this.name = name;
+    }
+
+    public User(String id, String pwd, String name, String rdate, int img, int conn) {
+        this.id = id;
+        this.pwd = pwd;
+        this.name = name;
+        this.rdate = rdate;
+        this.img = img;
+        this.conn = conn;
     }
 
     //img 나중에 만들기
@@ -56,5 +67,21 @@ public class User {
 
     public void setRdate(String rdate) {
         this.rdate = rdate;
+    }
+
+    public int getImg() {
+        return img;
+    }
+
+    public void setImg(int img) {
+        this.img = img;
+    }
+
+    public int getConn() {
+        return conn;
+    }
+
+    public void setConn(int conn) {
+        this.conn = conn;
     }
 }

@@ -23,29 +23,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         et_id= findViewById(R.id.et_id);
         et_pwd= findViewById(R.id.et_pwd);
-
-
     }
-
     public void clickBtn(View v){
         if(v.getId()==R.id.btn_apply){
             Intent intent = new Intent(this, ApplyActivity.class);
             startActivity(intent);
         }
         if(v.getId()==R.id.btn_login){
-            /*String id = et_id.getText().toString();
+            String id = et_id.getText().toString();
             String pwd= et_pwd.getText().toString();
 
-            if(id!=null && pwd != null && id.equals("") && pwd.equals("")){
+            if(id!=null && pwd != null){
                 loginTask = new LoginTask("http://70.12.114.144/wc/login.do");
                 loginTask.execute(id.trim(), pwd.trim());
-            }*/
-
-            Intent intent = new Intent(MainActivity.this, ControlActivity.class);
-            startActivity(intent);
+            }
         }
     }
 
@@ -69,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
             //http통신
             try{
+                Log.d("try check############",url);
                 URL url = new URL(this.url);
                 con = (HttpURLConnection)url.openConnection();
 
@@ -78,9 +72,12 @@ public class MainActivity extends AppCompatActivity {
                     con.setRequestProperty("Accept","*/*");
                     if(con.getResponseCode()!=HttpURLConnection.HTTP_OK)
                         return null;
+
                     br = new BufferedReader(new InputStreamReader(con.getInputStream()));
                     String line = null;
                     while(true){
+                        Log.d("while check############",this.url);
+
                         line=br.readLine();
                         if(line==null)
                             break;
@@ -108,9 +105,11 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
+            Log.d("excute",s);
             if(s.equals("1")){
                 Toast.makeText(MainActivity.this, "Login Success", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, ControlActivity.class);
+                intent.putExtra("id",et_id.getText().toString());
                 startActivity(intent);
                 finish();
             }

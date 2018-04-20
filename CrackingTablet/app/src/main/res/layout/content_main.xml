@@ -12,13 +12,25 @@
         android:id="@+id/l_home"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"></LinearLayout>
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/list_manage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/l_chart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"></LinearLayout>
+        android:orientation="vertical">
+
+        <WebView
+            android:id="@+id/webView_chart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/l_management"
@@ -30,11 +42,15 @@
             android:id="@+id/l_map"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="vertical"></LinearLayout>
+            android:orientation="vertical">
 
-        <ListView
-            android:id="@+id/list_manage"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
+        </LinearLayout>
+
+        <GridView
+            android:id="@+id/grid_mange"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:numColumns="2" />
+
     </LinearLayout>
 </FrameLayout>
