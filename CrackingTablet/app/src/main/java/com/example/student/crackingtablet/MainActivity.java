@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     private final String TAG = "MainActivity:::";
-    private final String wcURL = "http://70.12.114.144/wc";
+    private final String wcURL = "http://70.12.114.150/wc";
     private LinearLayout l_home, l_chart, l_management, l_map, container_h, container_m;
     private WebView webView_chart;
     private GoogleMap mMap;
@@ -194,7 +194,28 @@ public class MainActivity extends AppCompatActivity
         loginUser = new ArrayList<>();
         connUser = new ArrayList<>();
 
+        getAllUser();
         UpdateHomeLayout();
+    }
+
+    private void getAllUser() {
+        try {
+            ReceiveData receiveData = new ReceiveData(wcURL + "/alluser.do");
+            receiveData.addParameter("?comm=t");
+            String res = receiveData.execute().get();
+            Log.d(TAG, "getAllUser . . . res : " + res);
+
+            if (res != null && !res.equals("")) {
+                allUserH.clear();
+                allUser.clear();
+                Util.getAllFromJSON(allUserH, allUser, res);
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     private void UpdateHomeLayout() {
@@ -207,9 +228,10 @@ public class MainActivity extends AppCompatActivity
             String res = receiveData.execute().get();
             Log.d(TAG, "UpdateHomeLayout . . . res : " + res);
             loginUser.clear();
-            if(res != null && !res.equals("")) {
+            if (res != null && !res.equals("")) {
                 Util.getStringListFromJSON(loginUser, res);
             }
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -230,19 +252,19 @@ public class MainActivity extends AppCompatActivity
             userAdapter.notifyDataSetChanged();
         }
 
-        if(list.size() == 0) {
+        if (list.size() == 0) {
             Toast.makeText(this, "No one has logined", Toast.LENGTH_SHORT);
         }
     }
 
     private void UpdateManagementList() {
-        ArrayList<User> list = new ArrayList<>();
+ /*       ArrayList<User> list = new ArrayList<>();
 
         try {
             ReceiveData receiveData = new ReceiveData(wcURL + "/alluser.do");
             receiveData.addParameter("?comm=t");
             String res = receiveData.execute().get();
-            if(res != null && res.equals("")) {
+            if (res != null && res.equals("")) {
                 Util.getAllFromJSON(allUserH, allUser, res);
             }
         } catch (InterruptedException e) {
@@ -250,9 +272,10 @@ public class MainActivity extends AppCompatActivity
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
+*/
         Util.setAllUser(allUserH, allUser, loginUser, connUser);
 
+        Log.d(TAG, allUser.toString());
         UserGridAdapter userGridAdapter = new UserGridAdapter(allUser, this, container_m);
         GridView gridView = findViewById(R.id.grid_mange);
         gridView.setAdapter(userGridAdapter);
@@ -277,4 +300,5 @@ public class MainActivity extends AppCompatActivity
         stopService(connService);
         super.onDestroy();
     }
+
 }
