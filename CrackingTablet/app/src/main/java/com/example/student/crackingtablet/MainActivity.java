@@ -20,19 +20,27 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
-
+//implements OnMapReadyCallback
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback{
 
     private final String wcURL = "http://70.12.114.144/wc";
 
-    private LinearLayout l_home, l_chart, l_management, container_h, container_m;
+    private LinearLayout l_home, l_chart, l_management, l_map, container_h, container_m;
     private WebView webView_chart;
-    private boolean flag = true;
+    private GoogleMap mMap;
     private ReceiveData connectionReceiver;
-
+    private boolean flag = true;
+    
     Runnable r = new Runnable() {
         @Override
         public void run() {
@@ -120,17 +128,23 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_home) {
             l_home.setVisibility(View.VISIBLE);
+            l_map.setVisibility(View.INVISIBLE);
             l_chart.setVisibility(View.INVISIBLE);
             l_management.setVisibility(View.INVISIBLE);
         } else if (id == R.id.nav_map) {
-
+            l_home.setVisibility(View.INVISIBLE);
+            l_map.setVisibility(View.VISIBLE);
+            l_chart.setVisibility(View.INVISIBLE);
+            l_management.setVisibility(View.INVISIBLE);
         } else if (id == R.id.nav_management) {
             l_home.setVisibility(View.INVISIBLE);
+            l_map.setVisibility(View.INVISIBLE);
             l_chart.setVisibility(View.INVISIBLE);
             l_management.setVisibility(View.VISIBLE);
             UpdateManagementList();
         } else if (id == R.id.nav_chart) {
             l_home.setVisibility(View.INVISIBLE);
+            l_map.setVisibility(View.INVISIBLE);
             l_chart.setVisibility(View.VISIBLE);
             l_management.setVisibility(View.INVISIBLE);
         } else if (id == R.id.nav_logout) {
@@ -145,7 +159,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void makeUI() {
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
         l_home = findViewById(R.id.l_home);
+        l_map = findViewById(R.id.l_map);
         l_chart = findViewById(R.id.l_chart);
         l_management = findViewById(R.id.l_management);
         webView_chart = findViewById(R.id.webView_chart);
@@ -161,6 +180,7 @@ public class MainActivity extends AppCompatActivity
         l_home.setVisibility(View.VISIBLE);
         l_chart.setVisibility(View.INVISIBLE);
         l_management.setVisibility(View.INVISIBLE);
+        l_map.setVisibility(View.INVISIBLE);
     }
 
     private void UpdateHomeList() {
@@ -203,7 +223,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void onDisconnectUser(View v) {
-
         Toast.makeText(this, "Disconnect USER", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // Add a marker in Sydney and move the camera
+        LatLng sydney = new LatLng(-34, 151);
+        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 }
