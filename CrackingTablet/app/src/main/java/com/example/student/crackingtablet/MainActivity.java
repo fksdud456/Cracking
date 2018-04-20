@@ -1,6 +1,8 @@
 package com.example.student.crackingtablet;
 
 import android.content.Intent;
+import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -8,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,6 +22,7 @@ import android.webkit.WebViewClient;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -27,6 +31,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +57,32 @@ public class MainActivity extends AppCompatActivity
     private UserAdapter userAdapter;
     private Intent connService;
     private boolean first = true;
+    private boolean flag = true;
+    private ReceiveData connectionReceiver;
+    String id;
+    Runnable r = new Runnable() {
+        @Override
+        public void run() {
+            while (flag) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //좌표를 가져오기
+                Log.d("connectionReceiver ::", "run");
+                connectionReceiver = new ReceiveData(wcURL + "/connection.do");
+                connectionReceiver.addParameter("?comm=t");
+                try {
+                    connectionReceiver.execute().get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -260,9 +294,10 @@ public class MainActivity extends AppCompatActivity
     private void UpdateManagementList() {
  /*       ArrayList<User> list = new ArrayList<>();
 
+        ReceiveData receiveData = new ReceiveData(wcURL + "/alluser.do");
+        receiveData.addParameter("?comm=t");
         try {
-            ReceiveData receiveData = new ReceiveData(wcURL + "/alluser.do");
-            receiveData.addParameter("?comm=t");
+
             String res = receiveData.execute().get();
             if (res != null && res.equals("")) {
                 Util.getAllFromJSON(allUserH, allUser, res);
@@ -283,7 +318,53 @@ public class MainActivity extends AppCompatActivity
 
     public void onDisconnectUser(View v) {
         Toast.makeText(this, "Disconnect USER", Toast.LENGTH_SHORT).show();
+
+        //User user = new User();
+        //user.getId();
+        TextView tv = findViewById(R.id.tv_id_m);
+        //id = String.valueOf(v.getId());
+        id = tv.getText().toString();
+        Log.d("checkid#####", id);
+
+        AlertDialog dialog;
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Alert");
+        builder.setMessage("Are you sure you want to quit this sub app?");
+        builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String address = "http://70.12.114.114/wc/disconnect.do?comm=s&id=" + id;
+                URL url = null;
+                HttpURLConnection con = null;
+                try {
+                    url = new URL(address);
+                    con = (HttpURLConnection) url.openConnection();
+                    if (con != null) {
+                        con.setReadTimeout(10000); //제한시간
+                        con.setRequestMethod("GET");
+                        con.setRequestProperty("Accept", "*/*");
+                        if (con.getResponseCode() != HttpURLConnection.HTTP_OK)
+                            return;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+        builder.setNegativeButton("no", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        dialog = builder.create();
+        dialog.show();
+
+
+        Toast.makeText(this, "Disconnect USER", Toast.LENGTH_SHORT).show();
     }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
