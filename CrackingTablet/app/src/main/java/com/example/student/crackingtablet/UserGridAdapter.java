@@ -56,7 +56,7 @@ public class UserGridAdapter extends BaseAdapter {
 
         User user = list.get(i);
         //id 설정
-        if(user.getConn() == Util.CONN) {
+        if (user.getConn() == Util.CONN) {
             id.setText(user.getId() + "[연결됨]");
         } else {
             id.setText(user.getId());
@@ -69,13 +69,19 @@ public class UserGridAdapter extends BaseAdapter {
             imgNum = user.getImg();
         img.setImageResource(imgNum);
 
-        if(user.getLogin() == Util.LOGIN) {
+        if (user.getLogin() == Util.LOGIN) {
             vw.setBackgroundResource(R.color.colorAccent);
-        }
-        else {
+        } else {
             vw.setBackgroundResource(R.color.common_google_signin_btn_text_light_disabled);
         }
 
         return vw;
+    }
+
+    public void setItemStatus(int i, int status) {
+        User user = list.get(i);
+        user.setConn(status);
+        list.set(i, user);
+
     }
 }
