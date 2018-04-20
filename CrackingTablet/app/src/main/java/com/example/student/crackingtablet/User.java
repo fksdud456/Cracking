@@ -1,7 +1,6 @@
 package com.example.student.crackingtablet;
 
 public class User {
-
     String id;
     String pwd;
     String name;
@@ -9,6 +8,8 @@ public class User {
     String rdate;
     int img;
     int conn;
+    int login;
+    int motion;
 
     public User() {
     }
@@ -83,5 +84,21 @@ public class User {
 
     public void setConn(int conn) {
         this.conn = conn;
+    }
+
+    public int getLogin() {
+        return login;
+    }
+
+    public void setLogin(int login) {
+        this.login = login;
+    }
+
+    public int getMotion() {
+        return motion;
+    }
+
+    public void setMotion(int motion) {
+        this.motion = motion;
     }
 }

@@ -65,4 +65,8 @@ public class UserAdapter extends BaseAdapter {
         img.setImageResource(imgNum);
         return vw;
     }
+
+    public void setList(ArrayList<User> list) {
+        this.list = list;
+    }
 }

@@ -1,7 +1,6 @@
 package com.example.student.crackingtablet;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,31 +55,27 @@ public class UserGridAdapter extends BaseAdapter {
         TextView date = vw.findViewById(R.id.tv_loc_m);
 
         User user = list.get(i);
-        id.setText(user.getId());
+        //id 설정
+        if(user.getConn() == Util.CONN) {
+            id.setText(user.getId() + "[연결됨]");
+        } else {
+            id.setText(user.getId());
+        }
+
         name.setText(user.getName());
         date.setText(user.getRdate());
-
         int imgNum = R.drawable.heart;
         if (user.getImg() != 0)
             imgNum = user.getImg();
-
         img.setImageResource(imgNum);
 
-        if(status == 1) {
-            vw.setBackgroundResource(R.color.colorPrimaryDark);
-        }
-        else if(user.getConn() == 0) {
-            vw.setBackgroundResource(R.color.common_google_signin_btn_text_light_disabled);
-        }
-        else if(user.getConn() == 1){
+        if(user.getLogin() == Util.LOGIN) {
             vw.setBackgroundResource(R.color.colorAccent);
         }
-        return vw;
-    }
+        else {
+            vw.setBackgroundResource(R.color.common_google_signin_btn_text_light_disabled);
+        }
 
-    public void setItemStatus(int i, int status) {
-        User user = list.get(i);
-        user.setConn(status);
-        list.set(i, user);
+        return vw;
     }
 }
