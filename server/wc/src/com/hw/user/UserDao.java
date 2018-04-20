@@ -14,20 +14,40 @@ public class UserDao implements Dao<User, String> {
 
 	@Autowired
 	UserMapper mapper;
-	
+
 	@Override
-	public void insert(User t) {
-		mapper.insert(t);
-	}
-	
-	@Override
-	public User select(User t) {
-		return mapper.select(t);
+	public User select(String s) {
+		// TODO Auto-generated method stub
+		return mapper.select(s);
 	}
 
 	@Override
 	public List<User> selectAll() {
+		// TODO Auto-generated method stub
 		return mapper.selectAll();
 	}
+
+	
+
+	@Override
+	public void update(User u) {
+		mapper.update(u);
+		
+	}
+	
+
+	@Override
+	public void insert(User t) {
+		mapper.insert(t);
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<User> find() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 
 }

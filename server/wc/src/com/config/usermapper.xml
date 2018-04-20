@@ -5,17 +5,27 @@ PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
 <mapper namespace="com.hw.mapper.UserMapper">
 	
 	
-	<insert id="insert" parameterType="user">
-		INSERT INTO INFO VALUES (#{id},#{name},#{password}, 1, sysdate, null)
-	</insert>
+		
+	<update id="update" parameterType="user">
+		UPDATE INTO INFO VALUE(????)
+	</update>
 	
-	<select id="select" parameterType="user" resultType="user">
+	<insert id="insert" parameterType="user">
+		INSERT INTO INFO VALUES (#{id},#{name},#{password}, 0, sysdate, null)
+	</insert>	
+	
+	<select id="select" parameterType="string" resultType="user">
 		SELECT ID, PASSWORD FROM INFO WHERE ID = #{id}
 	</select>
 	
 	<select id="selectAll" resultType="user">
-		SELECT * FROM INFO
+		SELECT * FROM INFO where id != 'admin'
 	</select>
+	
+	<select id="find" resultType="user">
+		SELECT * FROM INFO where id != 'admin'
+	</select>
+	
 	
 </mapper>
 

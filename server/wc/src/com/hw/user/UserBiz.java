@@ -15,28 +15,37 @@ import com.hw.vo.User;
 @Service("userBiz")
 public class UserBiz implements Biz<User, String>{
 
-	@Resource(name="userDao") //Libraries�� Apache Tomcat�� ������� ������ ������ �� �� �ִ�.
+	@Resource(name="userDao") 
 	Dao<User, String> dao;
-	
-	public UserBiz() {
-		dao = new UserDao();
-	}
-	
-	@Transactional
+
 	@Override
-	public void register(User t) {
-		dao.insert(t);
-		//dao.insert(t);
+	public User select(String s) {
+		// TODO Auto-generated method stub
+		return dao.select(s);
 	}
-	
-	@Override
-	public User login(User t) {
-		return dao.select(t);
-		//dao.insert(t);
-	}
-	
+
 	@Override
 	public List<User> selectAll() {
-		return dao.selectAll();		
+		// TODO Auto-generated method stub
+		return dao.selectAll();	
 	}
+
+	@Override
+	public void insert(User t) {
+		dao.insert(t);
+		
+	}
+
+	@Override
+	public void update(User t) {
+		dao.update(t);
+		
+	}
+
+	@Override
+	public List<User> find() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
