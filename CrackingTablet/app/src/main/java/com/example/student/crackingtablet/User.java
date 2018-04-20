@@ -101,4 +101,19 @@ public class User {
     public void setMotion(int motion) {
         this.motion = motion;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", pwd='" + pwd + '\'' +
+                ", name='" + name + '\'' +
+                ", manager=" + manager +
+                ", rdate='" + rdate + '\'' +
+                ", img=" + img +
+                ", conn=" + conn +
+                ", login=" + login +
+                ", motion=" + motion +
+                '}';
+    }
 }

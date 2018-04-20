@@ -6,10 +6,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class Util {
+    private static final String TAG = "Util ::: ";
     public static final int CONN = 1;
     public static final int LOGIN = 1;
     public static final int DISCONN = 0;
@@ -62,6 +65,7 @@ public class Util {
                 listH.put(jo.getString("id"),
                         user);
                 list.add(user);
+                Log.d(TAG, "getAllFromJSON :: "  + user.toString());
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -83,6 +87,12 @@ public class Util {
 
             listH.put(id, user);
         }
+
+        Log.d("listH.keySet()", listH.keySet().toString() +"" + listH.keySet().size());
+        for ( String key : listH.keySet() ) {
+            all.add(listH.get(key));
+        }
+
         return;
     }
 }

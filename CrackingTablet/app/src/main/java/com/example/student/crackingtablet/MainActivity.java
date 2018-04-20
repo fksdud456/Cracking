@@ -233,7 +233,28 @@ public class MainActivity extends AppCompatActivity
         loginUser = new ArrayList<>();
         connUser = new ArrayList<>();
 
+        getAllUser();
         UpdateHomeLayout();
+    }
+
+    private void getAllUser() {
+        try {
+            ReceiveData receiveData = new ReceiveData(wcURL + "/alluser.do");
+            receiveData.addParameter("?comm=t");
+            String res = receiveData.execute().get();
+            Log.d(TAG, "getAllUser . . . res : " + res);
+
+            if (res != null && !res.equals("")) {
+                allUserH.clear();
+                allUser.clear();
+                Util.getAllFromJSON(allUserH, allUser, res);
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     private void UpdateHomeLayout() {
@@ -249,6 +270,7 @@ public class MainActivity extends AppCompatActivity
             if (res != null && !res.equals("")) {
                 Util.getStringListFromJSON(loginUser, res);
             }
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -275,7 +297,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void UpdateManagementList() {
-        ArrayList<User> list = new ArrayList<>();
+ /*       ArrayList<User> list = new ArrayList<>();
 
         ReceiveData receiveData = new ReceiveData(wcURL + "/alluser.do");
         receiveData.addParameter("?comm=t");
@@ -290,9 +312,10 @@ public class MainActivity extends AppCompatActivity
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
+*/
         Util.setAllUser(allUserH, allUser, loginUser, connUser);
 
+        Log.d(TAG, allUser.toString());
         UserGridAdapter userGridAdapter = new UserGridAdapter(allUser, this, container_m);
         GridView gridView = findViewById(R.id.grid_mange);
         gridView.setAdapter(userGridAdapter);
