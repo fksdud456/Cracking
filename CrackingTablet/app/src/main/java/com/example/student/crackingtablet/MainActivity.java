@@ -1,5 +1,6 @@
 package com.example.student.crackingtablet;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
@@ -20,7 +21,9 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -55,7 +58,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<String> loginUser;
     private ArrayList<String> connUser;
 
-    private UserAdapter userAdapter;
+    private UserAdapter userAdapter; //home 화면 리스트
     private Intent connService;
     private boolean first = true;
     private boolean flag = true;
@@ -63,7 +66,7 @@ public class MainActivity extends AppCompatActivity
     String id;
     UserGridAdapter gridAdapter;
     GridView gridView;
-
+    ImageButton btn_disconnect;
 
     Runnable r = new Runnable() {
         @Override
@@ -115,14 +118,16 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        connService = new Intent(this, ConnectionService.class);
-        connService.putExtra("command", "show");
+        connService = new Intent(MainActivity.this, ConnectionService.class);
         startService(connService);
-        gridView = findViewById(R.id.grid_manage);
         first = true;
         makeUI();
         first = false;
+        UpdateManagementList();
+
     }
+
+
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -297,83 +302,23 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void UpdateManagementList() {
- /*       ArrayList<User> list = new ArrayList<>();
-
-        ReceiveData receiveData = new ReceiveData(wcURL + "/alluser.do");
-        receiveData.addParameter("?comm=t");
-        try {
-
-            String res = receiveData.execute().get();
-            if (res != null && res.equals("")) {
-                Util.getAllFromJSON(allUserH, allUser, res);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-*/
         Util.setAllUser(allUserH, allUser, loginUser, connUser);
-
-        Log.d(TAG, allUser.toString());
+        //Log.d(TAG, allUser.toString());
         UserGridAdapter userGridAdapter = new UserGridAdapter(allUser, this, container_m);
-        GridView gridView = findViewById(R.id.grid_mange);
+        gridView = (GridView)findViewById(R.id.grid_manage);
+        Toast.makeText(MainActivity.this, "좀 되라", Toast.LENGTH_LONG).show();
         gridView.setAdapter(userGridAdapter);
+
     }
 
+
+
     public void onDisconnectUser(View v) {
-        Toast.makeText(this, "Disconnect USER", Toast.LENGTH_SHORT).show();
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                gridAdapter = new UserGridAdapter();
-                User user = (User)gridAdapter.getItem(position);
-                Toast.makeText(MainActivity.this, "select position : "+position,Toast.LENGTH_LONG).show();
-                Toast.makeText(MainActivity.this, "useId : "+user.getId(),Toast.LENGTH_LONG).show();
-                id=user.getId();
-            }
-        });
-        //User user = new User();
-        //user.getId();
 
-        //id = String.valueOf(v.getId());
 
-        Log.d("checkid#####", id);
+       // Log.d("checkid#####", id);
 
-        AlertDialog dialog;
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Alert");
-        builder.setMessage("Are you sure you want to quit this sub app?");
-        builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                String address = "http://70.12.114.150/wc/disconnect.do?comm=s&id=" + id;
-                URL url = null;
-                HttpURLConnection con = null;
-                try {
-                    url = new URL(address);
-                    con = (HttpURLConnection) url.openConnection();
-                    if (con != null) {
-                        con.setReadTimeout(10000); //제한시간
-                        con.setRequestMethod("GET");
-                        con.setRequestProperty("Accept", "*/*");
-                        if (con.getResponseCode() != HttpURLConnection.HTTP_OK)
-                            return;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        builder.setNegativeButton("no", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
 
-            }
-        });
-        dialog = builder.create();
-        dialog.show();
-        Toast.makeText(this, "Disconnect USER", Toast.LENGTH_SHORT).show();
     }
     @Override
     public void onMapReady(GoogleMap googleMap) {

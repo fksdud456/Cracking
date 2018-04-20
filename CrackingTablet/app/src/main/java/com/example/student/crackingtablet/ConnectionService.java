@@ -9,6 +9,7 @@ import android.util.Log;
 import java.util.concurrent.ExecutionException;
 
 public class ConnectionService extends Service {
+    public ConnectionService(){}
     private final String wcURL = "http://70.12.114.150/wc";
 
     private ReceiveData connectionReceiver;
