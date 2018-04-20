@@ -17,6 +17,7 @@ public class Util {
     public static final int LOGIN = 1;
     public static final int DISCONN = 0;
     public static final int NLOGIN = 0;
+
     public static void getListFromJSON(ArrayList<User> list, String josnString) {
         try {
             JSONArray ja = new JSONArray(josnString);
@@ -48,7 +49,7 @@ public class Util {
         return;
     }
 
-    public static void getAllFromJSON(HashMap<String, User> listH,  ArrayList<User> list, String josnString) {
+    public static void getAllFromJSON(HashMap<String, User> userMap,  String josnString) {
         User user;
         try {
             JSONArray ja = new JSONArray(josnString);
@@ -62,9 +63,8 @@ public class Util {
                         jo.getString("name"),
                         jo.getString("registdate"),
                         imgNum, 0);
-                listH.put(jo.getString("id"),
+                userMap.put(jo.getString("id"),
                         user);
-                list.add(user);
                 Log.d(TAG, "getAllFromJSON :: "  + user.toString());
             }
         } catch (JSONException e) {
@@ -89,6 +89,7 @@ public class Util {
         }
 
         Log.d("listH.keySet()", listH.keySet().toString() +"" + listH.keySet().size());
+        all.clear();
         for ( String key : listH.keySet() ) {
             all.add(listH.get(key));
         }

@@ -3,29 +3,26 @@ package com.example.student.crackingtablet;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.concurrent.ExecutionException;
 
-public class ConnectionService extends Service {
+public class ConnService extends Service {
     private final String TAG = "ConnectionService ::";
     private final String wcURL = "http://70.12.114.144/wc";
 
     private ReceiveData connectionReceiver;
     private boolean flag = true;
 
-    public ConnectionService() {
-
+    public ConnService() {
     }
 
-    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-
+        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
-        //return null;
     }
+
 
     @Override
     public void onCreate() {

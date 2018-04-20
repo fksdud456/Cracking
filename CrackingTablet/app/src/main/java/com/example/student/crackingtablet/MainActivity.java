@@ -2,7 +2,6 @@ package com.example.student.crackingtablet;
 
 import android.content.Intent;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -23,7 +22,6 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -34,7 +32,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.util.ArrayList;
@@ -46,7 +43,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     private final String TAG = "MainActivity:::";
-    private final String wcURL = "http://70.12.114.150/wc";
+    private final String wcURL = "http://70.12.114.144/wc";
     private LinearLayout l_home, l_chart, l_management, l_map, container_h, container_m;
     private WebView webView_chart;
     private GoogleMap mMap;
@@ -56,7 +53,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<String> connUser;
 
     private UserAdapter userAdapter;
-    private Intent connService;
+    private Intent connIntent;
     private boolean first = true;
     private boolean flag = true;
     private ReceiveData connectionReceiver;
@@ -114,10 +111,10 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        Log.d("왜안돼?!!!!!!!!!", "!!!!!!!!!!");
+        connIntent = new Intent(this, ConnService.class);
+        startService(connIntent);
 
-        connService = new Intent(this, ConnectionService.class);
-        connService.putExtra("command", "show");
-        startService(connService);
         gridView = findViewById(R.id.grid_manage);
         first = true;
         makeUI();
@@ -133,7 +130,7 @@ public class MainActivity extends AppCompatActivity
             String res = intent.getStringExtra("res");
             connUser.clear();
             Util.getStringListFromJSON(connUser, res);
-            Log.d(TAG, "conn " + res);
+            Log.d(TAG, ":::::::::::::::::::::::::::::::: conn " + res);
         }
 
         super.onNewIntent(intent);
@@ -247,7 +244,7 @@ public class MainActivity extends AppCompatActivity
             if (res != null && !res.equals("")) {
                 allUserH.clear();
                 allUser.clear();
-                Util.getAllFromJSON(allUserH, allUser, res);
+                Util.getAllFromJSON(allUserH, res);
             }
 
         } catch (InterruptedException e) {
@@ -297,27 +294,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void UpdateManagementList() {
- /*       ArrayList<User> list = new ArrayList<>();
-
-        ReceiveData receiveData = new ReceiveData(wcURL + "/alluser.do");
-        receiveData.addParameter("?comm=t");
-        try {
-
-            String res = receiveData.execute().get();
-            if (res != null && res.equals("")) {
-                Util.getAllFromJSON(allUserH, allUser, res);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-*/
         Util.setAllUser(allUserH, allUser, loginUser, connUser);
 
         Log.d(TAG, allUser.toString());
         UserGridAdapter userGridAdapter = new UserGridAdapter(allUser, this, container_m);
-        GridView gridView = findViewById(R.id.grid_mange);
+        GridView gridView = findViewById(R.id.grid_manage);
         gridView.setAdapter(userGridAdapter);
     }
 
@@ -387,7 +368,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        stopService(connService);
+        stopService(connIntent);
         super.onDestroy();
     }
 
