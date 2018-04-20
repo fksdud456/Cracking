@@ -1,9 +1,16 @@
 package com.example.student.crackingtablet;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -24,16 +31,20 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 //implements OnMapReadyCallback
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback{
 
-    private final String wcURL = "http://70.12.114.144/wc";
+    private final String wcURL = "http://70.12.114.150/wc";
+
+    ArrayList<Location1> list;
 
     private LinearLayout l_home, l_chart, l_management, l_map, container_h, container_m;
     private WebView webView_chart;
@@ -91,6 +102,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         makeUI();
+        list = new ArrayList<Location1>();
     }
 
     @Override
@@ -230,9 +242,128 @@ public class MainActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
+  /*      LatLng sydney = new LatLng(-34, 127.0266826);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));*/
+
+        requestMyLocation();
     }
+
+
+    private void requestMyLocation() {
+        LocationManager manager =
+                (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        try {
+            long minTime = 10000;
+            float minDistance = 0;
+            manager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    minTime,
+                    minDistance,
+                    new LocationListener() {
+                        @Override
+                        public void onLocationChanged(Location location) {
+                            showCurrentLocation(location);
+                        }
+
+                        @Override
+                        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                        }
+
+                        @Override
+                        public void onProviderEnabled(String provider) {
+
+                        }
+
+                        @Override
+                        public void onProviderDisabled(String provider) {
+
+                        }
+                    }
+            );
+
+            Location lastLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (lastLocation != null) {
+                showCurrentLocation(lastLocation);
+            }
+
+            manager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER,
+                    minTime,
+                    minDistance,
+                    new LocationListener() {
+                        @Override
+                        public void onLocationChanged(Location location) {
+                            showCurrentLocation(location);
+                        }
+
+                        @Override
+                        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                        }
+
+                        @Override
+                        public void onProviderEnabled(String provider) {
+
+                        }
+
+                        @Override
+                        public void onProviderDisabled(String provider) {
+
+                        }
+                    }
+            );
+
+
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void showCurrentLocation(Location location) {
+        LatLng curPoint = new LatLng(location.getLatitude(), location.getLongitude());
+
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{
+                            Manifest.permission.ACCESS_FINE_LOCATION},1);
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{
+                            Manifest.permission.ACCESS_COARSE_LOCATION},1);
+
+            return;
+        }
+
+        mMap.setMyLocationEnabled(true);
+
+        ReceiveData recvData = new ReceiveData(wcURL+"/location.do");
+
+        String res = null;
+        try {
+            res = recvData.execute().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        Util.getLocationFromJSON(list,res);
+
+
+        for(int i=0; i<list.size(); i++) {
+            LatLng m1 = new LatLng(Double.parseDouble(list.get(i).lat),Double.parseDouble(list.get(i).lon));
+            mMap.addMarker(new MarkerOptions().position(m1).title(list.get(i).id));
+        }
+
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 10));
+
+
+    }
+
+
 }
