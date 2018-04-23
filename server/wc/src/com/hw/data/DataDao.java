@@ -1,4 +1,4 @@
-package com.hw.user;
+package com.hw.data;
 
 import java.util.List;
 
@@ -6,54 +6,49 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.hw.frame.Dao;
-import com.hw.mapper.UserMapper;
-import com.hw.vo.User;
+import com.hw.mapper.DataMapper;
+import com.hw.vo.Data;
 
-@Repository("userDao")
-public class UserDao implements Dao<User, String> {
-
+@Repository("dataDao")
+public class DataDao  implements Dao<Data, String>  {
 	@Autowired
-	UserMapper mapper;
+	DataMapper mapper;
 
 	@Override
-	public User select(String s) {
+	public Data select(String s) {
 		// TODO Auto-generated method stub
 		return mapper.select(s);
 	}
 
 	@Override
-	public List<User> selectAll() {
+	public List<Data> selectAll() {
 		// TODO Auto-generated method stub
 		return mapper.selectAll();
 	}
 
-	
-
 	@Override
-	public void update(User u) {
-		mapper.update(u);
-		
-	}
-	
-
-	@Override
-	public void insert(User t) {
-		mapper.insert(t);
-		// TODO Auto-generated method stub
-		
+	public void insert(Data t) {
+		mapper.insert(t);		
 	}
 
 	@Override
-	public List<User> find() {
+	public void update(Data t) {
+		mapper.update(t);
+	}
+
+	@Override
+	public List<Data> find() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void updateAll() {
-		// TODO Auto-generated method stub
+		mapper.updateAll();
 		
 	}
+
+
 	
 
 }
