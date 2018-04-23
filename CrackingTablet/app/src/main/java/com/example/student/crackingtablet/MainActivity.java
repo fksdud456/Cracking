@@ -48,8 +48,6 @@ public class MainActivity extends AppCompatActivity
     public static final String wcURL = "http://70.12.114.144/wc";
     private final String TAG = "MainActivity:::";
 
-
-
     private LinearLayout l_home, l_chart, l_management, l_map, container_h, container_m;
     private WebView webView_chart;
     private GoogleMap mMap;
@@ -64,9 +62,6 @@ public class MainActivity extends AppCompatActivity
     private UserGridAdapter userGridAdapter; // management user grid view
     private Intent connIntent;
 
-    private boolean first = true;
-    private boolean flag = true;
-    private ReceiveData connectionReceiver;
     String id;
     GridView gridView;
     ImageButton btn_disconnect;
@@ -101,12 +96,10 @@ public class MainActivity extends AppCompatActivity
 
         gridView = findViewById(R.id.grid_manage);
 
-        first = true;
         makeUI();
-        first = false;
+
         UpdateManagementList();
     }
-
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -191,6 +184,7 @@ public class MainActivity extends AppCompatActivity
             l_map.setVisibility(View.VISIBLE);
             l_chart.setVisibility(View.INVISIBLE);
             l_management.setVisibility(View.INVISIBLE);
+            requestMyLocation();
         } else if (id == R.id.nav_management) {
             l_home.setVisibility(View.INVISIBLE);
             l_map.setVisibility(View.INVISIBLE);
@@ -243,7 +237,14 @@ public class MainActivity extends AppCompatActivity
         list = new ArrayList<Location1>();
 
         getAllUser();
-        UpdateHomeLayout();
+
+        userAdapter = new UserAdapter(getLoginUser(), this, container_h);
+        ListView listView = findViewById(R.id.list_manage);
+        listView.setAdapter(userAdapter);
+
+        userGridAdapter = new UserGridAdapter(allUser, this, container_m);
+        gridView = (GridView) findViewById(R.id.grid_manage);
+        gridView.setAdapter(userGridAdapter);
     }
 
     private void getAllUser() {
@@ -265,8 +266,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void UpdateHomeLayout() {
+    private ArrayList<User> getLoginUser() {
         Log.d(TAG, "UpdateHomeLayout . . .");
+
+        ArrayList<User> list = new ArrayList<>();
 
         ReceiveData receiveData = new ReceiveData(wcURL + "/loginuser.do");
         receiveData.addParameter("?comm=t");
@@ -278,26 +281,20 @@ public class MainActivity extends AppCompatActivity
             if (res != null && !res.equals("")) {
                 Util.getStringListFromJSON(loginUser, res);
             }
-
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
-        ArrayList<User> list = new ArrayList<>();
         for (String id : loginUser) {
             list.add(allUserH.get(id));
         }
+        return list;
+    }
 
-        if (first) {
-            userAdapter = new UserAdapter(list, this, container_h);
-            ListView listView = findViewById(R.id.list_manage);
-            listView.setAdapter(userAdapter);
-        } else {
-            userAdapter.setList(list);
-            userAdapter.notifyDataSetChanged();
-        }
+    private void UpdateHomeLayout() {
+        userAdapter.setList(getLoginUser());
+        userAdapter.notifyDataSetChanged();
 
         if (list.size() == 0) {
             Toast.makeText(this, "No one has logined", Toast.LENGTH_SHORT);
@@ -307,10 +304,12 @@ public class MainActivity extends AppCompatActivity
     private void UpdateManagementList() {
         Log.d(TAG, "UpdateManagementList");
         Util.setAllUser(allUserH, allUser, loginUser, connUser);
-        userGridAdapter = new UserGridAdapter(allUser, this, container_m);
+        userGridAdapter.setList(allUser);
+        userGridAdapter.notifyDataSetChanged();
 
-        gridView = (GridView) findViewById(R.id.grid_manage);
-        gridView.setAdapter(userGridAdapter);
+        if (list.size() == 0) {
+            Toast.makeText(this, "No one has logined", Toast.LENGTH_SHORT);
+        }
     }
 
     @Override
@@ -321,9 +320,8 @@ public class MainActivity extends AppCompatActivity
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));*/
 
-        requestMyLocation();
+        //requestMyLocation();
     }
-
 
     private void requestMyLocation() {
         LocationManager manager =

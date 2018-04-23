@@ -35,6 +35,10 @@ public class UserGridAdapter extends BaseAdapter {
 
     }
 
+    public void setList(ArrayList<User> list) {
+        this.list = list;
+    }
+
     public UserGridAdapter(ArrayList<User> list, final Context context, LinearLayout container) {
         map = new HashMap<>();
         this.list = list;
@@ -92,6 +96,11 @@ public class UserGridAdapter extends BaseAdapter {
             vw.setBackgroundResource(R.color.common_google_signin_btn_text_light_disabled);
         }
 
+        if (user.isOptionEnabled(User.MOTION)){
+            vw.setBackgroundResource(R.color.colorMotion);
+        }
+
+
 
         clickDisconnect(user.getId());
 
@@ -148,4 +157,5 @@ public class UserGridAdapter extends BaseAdapter {
         list.set(index, user);
         notifyDataSetChanged();
     }
+
 }
