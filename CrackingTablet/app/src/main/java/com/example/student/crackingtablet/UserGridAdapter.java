@@ -24,6 +24,7 @@ import java.util.HashMap;
 
 public class UserGridAdapter extends BaseAdapter {
 
+    //HashMap<String, Integer> map =
     ArrayList<User> list;
     Context context;
     LinearLayout container;
@@ -59,9 +60,6 @@ public class UserGridAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View vw = inflater.inflate(R.layout.user_management, container, true);
-
-        setListner();
-
 
         ImageView img = vw.findViewById(R.id.imageView_profile_m);
         TextView id = vw.findViewById(R.id.tv_id_m);
@@ -106,23 +104,8 @@ public class UserGridAdapter extends BaseAdapter {
                 builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        String address = "http://70.12.114.150/wc/disconnect.do?comm=s&id=" + idz;
-                        Log.d("checkaddress#####", address);
-                        URL url = null;
-                        HttpURLConnection con = null;
-                        try {
-                            url = new URL(address);
-                            con = (HttpURLConnection) url.openConnection();
-                            if (con != null) {
-                                con.setReadTimeout(10000); //제한시간
-                                con.setRequestMethod("GET");
-                                con.setRequestProperty("Accept", "*/*");
-                                if (con.getResponseCode() != HttpURLConnection.HTTP_OK)
-                                    return;
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        SendData sendData = new SendData(MainActivity.wcURL+"/disconnect.do?comm=t&id=" + idz);
+                        sendData.execute();
                     }
                 });
                 builder.setNegativeButton("no", new DialogInterface.OnClickListener() {

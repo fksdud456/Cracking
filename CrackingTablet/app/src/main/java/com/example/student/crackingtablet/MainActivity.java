@@ -45,8 +45,9 @@ import java.util.concurrent.ExecutionException;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
+    public static final String wcURL = "http://70.12.114.144/wc";
+
     private final String TAG = "MainActivity:::";
-    private final String wcURL = "http://70.12.114.144/wc";
     private LinearLayout l_home, l_chart, l_management, l_map, container_h, container_m;
     private WebView webView_chart;
     private GoogleMap mMap;
@@ -55,16 +56,14 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<String> loginUser;
     private ArrayList<String> connUser;
 
-
-    private UserAdapter userAdapter; //home 화면 리스트
-    private UserAdapter userAdapter;
+    private UserAdapter userAdapter; //home login user list
+    private UserGridAdapter userGridAdapter; // management user grid view
     private Intent connIntent;
 
     private boolean first = true;
     private boolean flag = true;
     private ReceiveData connectionReceiver;
     String id;
-    UserGridAdapter gridAdapter;
     GridView gridView;
     ImageButton btn_disconnect;
 
@@ -128,7 +127,6 @@ public class MainActivity extends AppCompatActivity
         UpdateManagementList();
 
     }
-
 
 
     @Override
@@ -306,7 +304,7 @@ public class MainActivity extends AppCompatActivity
     private void UpdateManagementList() {
         Util.setAllUser(allUserH, allUser, loginUser, connUser);
         //Log.d(TAG, allUser.toString());
-        UserGridAdapter userGridAdapter = new UserGridAdapter(allUser, this, container_m);
+        userGridAdapter = new UserGridAdapter(allUser, this, container_m);
 
         gridView = (GridView)findViewById(R.id.grid_manage);
         Toast.makeText(MainActivity.this, "좀 되라", Toast.LENGTH_LONG).show();
@@ -314,15 +312,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
-
-    public void onDisconnectUser(View v) {
-
-
-       // Log.d("checkid#####", id);
-
-
-    }
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
