@@ -1,6 +1,7 @@
 package com.example.student.crackingtablet;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public class UserAdapter extends BaseAdapter {
     ArrayList<User> list;
@@ -52,7 +54,7 @@ public class UserAdapter extends BaseAdapter {
         TextView id = vw.findViewById(R.id.tv_id_h);
         TextView name = vw.findViewById(R.id.tv_name_h);
         TextView date = vw.findViewById(R.id.tv_loc_h);
-
+        Log.d("getView :: ", "index" + i+" size: "+list.size());
         User user = list.get(i);
         id.setText(user.getId());
         name.setText(user.getName());
@@ -64,5 +66,9 @@ public class UserAdapter extends BaseAdapter {
 
         img.setImageResource(imgNum);
         return vw;
+    }
+
+    public void setList(ArrayList<User> list) {
+        this.list = list;
     }
 }

@@ -1,7 +1,9 @@
 package com.example.student.crackingtablet;
 
+
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -23,6 +25,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -31,50 +34,42 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
+
 //implements OnMapReadyCallback
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback{
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
-    private final String wcURL = "http://70.12.114.144/wc";
+    public static final String wcURL = "http://70.12.114.144/wc";
+    private final String TAG = "MainActivity:::";
 
-    ArrayList<Location1> list;
+
 
     private LinearLayout l_home, l_chart, l_management, l_map, container_h, container_m;
     private WebView webView_chart;
     private GoogleMap mMap;
-    private ReceiveData connectionReceiver;
+    private HashMap<String, User> allUserH;
+    private ArrayList<User> allUser;
+    private ArrayList<String> loginUser;
+    private ArrayList<String> connUser;
+    private ArrayList<String> dataUser;
+    private ArrayList<Location1> list;
+
+    private UserAdapter userAdapter; //home login user list
+    private UserGridAdapter userGridAdapter; // management user grid view
+    private Intent connIntent;
+
+    private boolean first = true;
     private boolean flag = true;
-    
-    Runnable r = new Runnable() {
-        @Override
-        public void run() {
-            while(flag) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                //좌표를 가져오기
-                Log.d("connectionReceiver ::" , "run");
-                connectionReceiver = new ReceiveData(wcURL+"/connection.do");
-                connectionReceiver.addParameter("?comm=t");
-                try {
-                    connectionReceiver.execute().get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    };
+    private ReceiveData connectionReceiver;
+    String id;
+    GridView gridView;
+    ImageButton btn_disconnect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,9 +96,56 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        connIntent = new Intent(this, ConnService.class);
+        startService(connIntent);
+
+        gridView = findViewById(R.id.grid_manage);
+
+        first = true;
         makeUI();
-        list = new ArrayList<Location1>();
+        first = false;
+        UpdateManagementList();
     }
+
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        String command = intent.getStringExtra("command");
+
+        // connection.do
+        if (command.equals("conn")) {
+            Log.d(TAG, "onNewIntent :: conn :: ");
+            String res = intent.getStringExtra("res");
+
+            connUser.clear();
+            Util.getStringListFromJSON(connUser, res);
+
+            for (String id : connUser)
+                userGridAdapter.setOptionEnable(id, User.CONNECTION);
+        } else if (command.equals("login")) {
+            Log.d(TAG, "onNewIntent :: login :: ");
+            String res = intent.getStringExtra("res");
+
+            loginUser.clear();
+            Util.getStringListFromJSON(loginUser, res);
+
+            for (String id : loginUser)
+                userGridAdapter.setOptionEnable(id, User.LOGIN);
+        } else if (command.equals("data")) {
+            Log.d(TAG, "onNewIntent :: data :: ");
+            String res = intent.getStringExtra("res");
+
+            dataUser.clear();
+            Util.getStringListFromJSON(dataUser, res);
+
+            for (String id : dataUser)
+                userGridAdapter.setOptionEnable(id, User.MOTION);
+        }
+        //userAdapter.notifyDataSetChanged();
+
+        super.onNewIntent(intent);
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -143,6 +185,7 @@ public class MainActivity extends AppCompatActivity
             l_map.setVisibility(View.INVISIBLE);
             l_chart.setVisibility(View.INVISIBLE);
             l_management.setVisibility(View.INVISIBLE);
+            UpdateHomeLayout();
         } else if (id == R.id.nav_map) {
             l_home.setVisibility(View.INVISIBLE);
             l_map.setVisibility(View.VISIBLE);
@@ -183,8 +226,6 @@ public class MainActivity extends AppCompatActivity
         container_h = findViewById(R.id.container_h);
         container_m = findViewById(R.id.container_m);
 
-        UpdateHomeList();
-
         webView_chart.setWebViewClient(new WebViewClient());
         webView_chart.getSettings().setJavaScriptEnabled(true);
         webView_chart.loadUrl(wcURL + "chart");
@@ -193,16 +234,50 @@ public class MainActivity extends AppCompatActivity
         l_chart.setVisibility(View.INVISIBLE);
         l_management.setVisibility(View.INVISIBLE);
         l_map.setVisibility(View.INVISIBLE);
+
+        allUserH = new HashMap<>();
+        allUser = new ArrayList<>();
+        loginUser = new ArrayList<>();
+        connUser = new ArrayList<>();
+        dataUser = new ArrayList<>();
+        list = new ArrayList<Location1>();
+
+        getAllUser();
+        UpdateHomeLayout();
     }
 
-    private void UpdateHomeList() {
-        ArrayList<User> list = new ArrayList<>();
-        ReceiveData receiveData = new ReceiveData(wcURL + "/connection.do");
+    private void getAllUser() {
+        try {
+            ReceiveData receiveData = new ReceiveData(wcURL + "/alluser.do");
+            receiveData.addParameter("?comm=t");
+            String res = receiveData.execute().get();
+            Log.d(TAG, "getAllUser . . . res : " + res);
+
+            if (res != null && !res.equals("")) {
+                allUserH.clear();
+                Util.getAllFromJSON(allUserH, res);
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void UpdateHomeLayout() {
+        Log.d(TAG, "UpdateHomeLayout . . .");
+
+        ReceiveData receiveData = new ReceiveData(wcURL + "/loginuser.do");
         receiveData.addParameter("?comm=t");
 
         try {
-            String connectedIds = receiveData.execute().get();
-            Toast.makeText(this, connectedIds, Toast.LENGTH_LONG).show();
+            String res = receiveData.execute().get();
+            Log.d(TAG, "UpdateHomeLayout . . . res : " + res);
+            loginUser.clear();
+            if (res != null && !res.equals("")) {
+                Util.getStringListFromJSON(loginUser, res);
+            }
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -210,32 +285,32 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
-        UserAdapter userAdapter = new UserAdapter(list, this, container_h);
-        ListView listView = findViewById(R.id.list_manage);
-        listView.setAdapter(userAdapter);
+        ArrayList<User> list = new ArrayList<>();
+        for (String id : loginUser) {
+            list.add(allUserH.get(id));
+        }
+
+        if (first) {
+            userAdapter = new UserAdapter(list, this, container_h);
+            ListView listView = findViewById(R.id.list_manage);
+            listView.setAdapter(userAdapter);
+        } else {
+            userAdapter.setList(list);
+            userAdapter.notifyDataSetChanged();
+        }
+
+        if (list.size() == 0) {
+            Toast.makeText(this, "No one has logined", Toast.LENGTH_SHORT);
+        }
     }
 
     private void UpdateManagementList() {
-        // Get online userlist from database
-        ArrayList<User> list = new ArrayList<>();
-        ReceiveData receiveData = new ReceiveData(wcURL + "/alluser.do");
-        receiveData.addParameter("?comm=t");
-        try {
-            String allUser = receiveData.execute().get();
-            Util.getListFromJSON(list, allUser);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        Log.d(TAG, "UpdateManagementList");
+        Util.setAllUser(allUserH, allUser, loginUser, connUser);
+        userGridAdapter = new UserGridAdapter(allUser, this, container_m);
 
-        UserGridAdapter userGridAdapter = new UserGridAdapter(list, this, container_m);
-        GridView gridView = findViewById(R.id.grid_mange);
+        gridView = (GridView) findViewById(R.id.grid_manage);
         gridView.setAdapter(userGridAdapter);
-    }
-
-    public void onDisconnectUser(View v) {
-        Toast.makeText(this, "Disconnect USER", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -331,18 +406,18 @@ public class MainActivity extends AppCompatActivity
 
             ActivityCompat.requestPermissions(this,
                     new String[]{
-                            Manifest.permission.ACCESS_FINE_LOCATION},1);
+                            Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
             ActivityCompat.requestPermissions(this,
                     new String[]{
-                            Manifest.permission.ACCESS_COARSE_LOCATION},1);
+                            Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
 
             return;
         }
 
         mMap.setMyLocationEnabled(true);
 
-        ReceiveData recvData = new ReceiveData(wcURL+"/location.do?comm=t");
+        ReceiveData recvData = new ReceiveData(wcURL + "/location.do?comm=t");
 
         String res = null;
         try {
@@ -353,17 +428,16 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
         list.clear();
-        Util.getLocationFromJSON(list,res);
+        Util.getLocationFromJSON(list, res);
 
 
-        for(int i=0; i<list.size(); i++) {
-
+        for (int i = 0; i < list.size(); i++) {
             double latitude = Double.parseDouble(list.get(i).lat);
             double longitude = Double.parseDouble(list.get(i).lon);
 
-            if(latitude>37.52 || latitude < 37.45 || longitude <127 || longitude> 127.06){
-                Log.d(null,"aaaaa");
-                recvData = new ReceiveData(wcURL+"/disconnect.do?comm=t&id="+list.get(i).id);
+            if (latitude > 37.52 || latitude < 37.45 || longitude < 127 || longitude > 127.06) {
+                Log.d(null, "aaaaa");
+                recvData = new ReceiveData(wcURL + "/disconnect.do?comm=t&id=" + list.get(i).id);
                 try {
                     recvData.execute().get();
                 } catch (InterruptedException e) {
@@ -373,14 +447,16 @@ public class MainActivity extends AppCompatActivity
                 }
                 continue;
             }
-            LatLng m1 = new LatLng(Double.parseDouble(list.get(i).lat),Double.parseDouble(list.get(i).lon));
+            LatLng m1 = new LatLng(Double.parseDouble(list.get(i).lat), Double.parseDouble(list.get(i).lon));
             mMap.addMarker(new MarkerOptions().position(m1).title(list.get(i).id));
         }
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 15));
-
-
     }
 
-
+    @Override
+    protected void onDestroy() {
+        stopService(connIntent);
+        super.onDestroy();
+    }
 }

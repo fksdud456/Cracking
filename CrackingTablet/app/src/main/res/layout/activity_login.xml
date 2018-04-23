@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="177dp"
+        android:layout_marginTop="221dp"
         android:ems="10"
         android:hint="Input id"
         android:inputType="textPersonName" />
@@ -21,9 +21,7 @@
         android:id="@+id/et_pwd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="256dp"
+        android:layout_centerInParent="true"
         android:ems="10"
         android:hint="Input password"
         android:inputType="textPersonName" />
@@ -34,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="66dp"
+        android:layout_marginTop="113dp"
         android:text="Cracking Manger"
         android:textSize="30sp" />
 
@@ -44,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="231dp"
+        android:layout_marginBottom="156dp"
         android:onClick="clickBtn"
         android:text="Login" />
 </RelativeLayout>
