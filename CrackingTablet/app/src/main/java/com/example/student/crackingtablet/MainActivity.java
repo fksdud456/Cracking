@@ -67,30 +67,6 @@ public class MainActivity extends AppCompatActivity
     GridView gridView;
     ImageButton btn_disconnect;
 
-    Runnable r = new Runnable() {
-        @Override
-        public void run() {
-            while (flag) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                //좌표를 가져오기
-                Log.d("connectionReceiver ::", "run");
-                connectionReceiver = new ReceiveData(wcURL + "/connection.do");
-                connectionReceiver.addParameter("?comm=t");
-                try {
-                    connectionReceiver.execute().get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,13 +108,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onNewIntent(Intent intent) {
         String command = intent.getStringExtra("command");
+
         // connection.do
-        if (command.equals("coon")) {
-            //String command = intent.getStringExtra("command");
+        if (command.equals("conn")) {
+            Log.d(TAG, "onNewIntent :: conn :: ");
             String res = intent.getStringExtra("res");
             connUser.clear();
             Util.getStringListFromJSON(connUser, res);
-            Log.d(TAG, ":::::::::::::::::::::::::::::::: conn " + res);
+            for(String id : connUser) {
+                userGridAdapter.setItemStatus(id, Util.CONN);
+            }
         }
 
         super.onNewIntent(intent);

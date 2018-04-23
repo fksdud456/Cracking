@@ -16,7 +16,7 @@ public class Util {
     public static final int CONN = 1;
     public static final int LOGIN = 1;
     public static final int DISCONN = 0;
-    public static final int NLOGIN = 0;
+
 
     public static void getListFromJSON(ArrayList<User> list, String josnString) {
         try {

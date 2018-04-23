@@ -52,11 +52,11 @@ public class ConnService extends Service {
             public void run() {
                 while(flag) {
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(5000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    //좌표를 가져오기
+
                     Log.d("connectionReceiver ::" , "run");
                     connectionReceiver = new ReceiveData(wcURL+"/connection.do");
                     connectionReceiver.addParameter("?comm=t");
@@ -77,12 +77,14 @@ public class ConnService extends Service {
         new Thread(r).start();
     }
 
-    public void changeFlag() {
+    @Override
+    public void onDestroy() {
         flag = false;
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        super.onDestroy();
     }
 }

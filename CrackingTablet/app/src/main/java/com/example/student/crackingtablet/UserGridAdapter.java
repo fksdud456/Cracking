@@ -24,7 +24,7 @@ import java.util.HashMap;
 
 public class UserGridAdapter extends BaseAdapter {
 
-    //HashMap<String, Integer> map =
+    HashMap<String, Integer> map;
     ArrayList<User> list;
     Context context;
     LinearLayout container;
@@ -36,6 +36,7 @@ public class UserGridAdapter extends BaseAdapter {
     }
 
     public UserGridAdapter(ArrayList<User> list, final Context context, LinearLayout container) {
+        map = new HashMap<>();
         this.list = list;
         this.context = context;
         this.container = container;
@@ -58,6 +59,8 @@ public class UserGridAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
+        map.put(list.get(i).getId(), i);
+
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View vw = inflater.inflate(R.layout.user_management, container, true);
 
@@ -106,6 +109,7 @@ public class UserGridAdapter extends BaseAdapter {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         SendData sendData = new SendData(MainActivity.wcURL+"/disconnect.do?comm=t&id=" + idz);
                         sendData.execute();
+                        setItemStatus(idz, Util.DISCONN);
                     }
                 });
                 builder.setNegativeButton("no", new DialogInterface.OnClickListener() {
@@ -125,4 +129,13 @@ public class UserGridAdapter extends BaseAdapter {
         user.setConn(status);
         list.set(i, user);
     }
+
+    public void setItemStatus(String id, int status) {
+        int index = map.get(id);
+        User user = list.get(index);
+        user.setConn(status);
+
+        list.set(index, user);
+    }
+
 }
