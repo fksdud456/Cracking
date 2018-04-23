@@ -7,14 +7,14 @@ import android.util.Log;
 
 import java.util.concurrent.ExecutionException;
 
-public class ConnService extends Service {
-    private final String TAG = "ConnectionService ::";
+public class DataService extends Service {
+    private final String TAG = "DataService ::";
     private final String wcURL = "http://70.12.114.144/wc";
 
     private ReceiveData connectionReceiver;
     private boolean flag = true;
 
-    public ConnService() {
+    public DataService() {
     }
 
     @Override
@@ -41,9 +41,6 @@ public class ConnService extends Service {
     }
 
     public void processCommand(Intent intent) {
-        String command = intent.getStringExtra("command");
-        String name = intent.getStringExtra("name");
-
         final Intent sintent = new Intent(getApplicationContext(), MainActivity.class);
         sintent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
@@ -52,24 +49,18 @@ public class ConnService extends Service {
             public void run() {
                 while(flag) {
                     try {
-                        Thread.sleep(5000);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
 
                     try {
-                        sintent.putExtra("command", "connservice");
+                        sintent.putExtra("command", "dataservice");
 
-                        connectionReceiver = new ReceiveData(wcURL+"/connection.do");
+                        connectionReceiver = new ReceiveData(wcURL+"/data.do");
                         connectionReceiver.addParameter("?comm=t");
                         String res = connectionReceiver.execute().get();
-                        sintent.putExtra("conn", res);
-
-
-                        connectionReceiver = new ReceiveData(wcURL+"/loginuser.do");
-                        connectionReceiver.addParameter("?comm=t");
-                        res = connectionReceiver.execute().get();
-                        sintent.putExtra("login", res);
+                        sintent.putExtra("data", res);
 
                         startActivity(sintent);
                     } catch (InterruptedException e) {

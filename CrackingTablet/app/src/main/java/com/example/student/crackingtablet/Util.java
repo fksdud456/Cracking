@@ -80,6 +80,9 @@ public class Util {
     }
 
     public static void getLocationFromJSON(ArrayList<Location1> list, String josnString) {
+        if(josnString.equals(""))
+            return;
+
         try {
             JSONArray ja = new JSONArray(josnString);
             for (int i = 0; i < ja.length(); i++) {

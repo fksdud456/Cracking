@@ -169,4 +169,12 @@ public class UserGridAdapter extends BaseAdapter {
         }
     }
 
+    public void setMotionDisableAll() {
+        Log.d("setOptionDisableAll" , ":: ");
+
+        for(User user : list) {
+            user.optionDisable(User.MOTION);
+            list.set(map.get(user.getId()), user);
+        }
+    }
 }
