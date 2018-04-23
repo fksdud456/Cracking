@@ -5,10 +5,6 @@ PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
 <mapper namespace="com.hw.mapper.UserMapper">
 	
 	
-		
-	<update id="update" parameterType="user">
-		UPDATE INTO INFO VALUE(????)
-	</update>
 	
 	<insert id="insert" parameterType="user">
 		INSERT INTO INFO VALUES (#{id},#{name},#{password}, 0, sysdate, null)

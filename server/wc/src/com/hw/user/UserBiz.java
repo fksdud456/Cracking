@@ -48,4 +48,10 @@ public class UserBiz implements Biz<User, String>{
 		return null;
 	}
 
+	@Override
+	public void updateAll() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

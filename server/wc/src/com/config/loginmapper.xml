@@ -7,12 +7,12 @@ PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
 	
 	<update id="update" parameterType="login">
 		UPDATE LOGIN 
-		SET LOGINSTATE = #{loginstate}, CONNECTION = #{connection}, DATA = #{data}, LAT = #{lat},  LON = #{lon} 
+		SET LOGINSTATE = #{loginstate}, CONNECTION = #{connection}, DATA = #{data}, LAT = #{lat},  LON = #{lon}, DISCONN = #{disconn} 
 		WHERE ID = #{id}
 	</update>	
 		
 	<insert id="insert" parameterType="login">
-		INSERT INTO LOGIN VALUES (#{id}, 0, 0, 0, 0, 0)
+		INSERT INTO LOGIN VALUES (#{id}, 0, 0, 0, 0, 0, 0)
 	</insert>
 	
 	<select id="select" parameterType="String" resultType = "login">
@@ -25,8 +25,7 @@ PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
 	
 	<select id="find" resultType = "login">
 		SELECT * FROM LOGIN WHERE LOGINSTATE = 1
-	</select>
-	
+	</select>	
 	
 </mapper>
 

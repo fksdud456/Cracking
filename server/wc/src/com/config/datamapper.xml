@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hw.mapper.DataMapper">
+
+	<update id="updateAll">
+		UPDATE CONN SET B7=B6, B6=B5, B5=B4, B4 = B3, B3 = B2, B2= B1, B1 = NOW
+	</update>	
+	
+	<update id="update" parameterType="data">
+		UPDATE CONN SET NOW = #{now} WHERE ID = #{id}
+	</update>
+	
+	<select id="selectAll" resultType = "data">
+		select * from CONN
+	</select>
+	
+	<select id="select" parameterType = "String" resultType = "data">
+		select * from CONN where id=#{id}
+	</select>
+	
+	<select id="insert" parameterType = "data">
+		INSERT INTO CONN VALUES (#{id}, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+	</select>
+	
+</mapper>
+
+
+
+
+
+

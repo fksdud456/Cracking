@@ -48,6 +48,12 @@ public class UserDao implements Dao<User, String> {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void updateAll() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 
 }

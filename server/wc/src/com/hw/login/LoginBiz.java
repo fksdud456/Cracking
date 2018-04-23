@@ -45,6 +45,12 @@ public class LoginBiz implements Biz<Login, String>{
 	public List<Login> find() {
 		return dao.find();
 	}
+
+	@Override
+	public void updateAll() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 	

@@ -7,11 +7,13 @@ PUBLIC "-//mybatis.org/DTD Config 3.0//EN"
 	<typeAliases>
 		<typeAlias type="com.hw.vo.User" alias="user" />
 		<typeAlias type="com.hw.vo.Login" alias="login" />
+		<typeAlias type="com.hw.vo.Data" alias="data" />
 	</typeAliases>
 
 	<mappers>
 		<mapper resource="com/config/usermapper.xml" />
 		<mapper resource="com/config/loginmapper.xml" />
+		<mapper resource="com/config/datamapper.xml" /> 
 	</mappers>
 
 

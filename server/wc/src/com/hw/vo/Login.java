@@ -8,6 +8,7 @@ public class Login {
 	int data;
 	Double lat;
 	Double lon;
+	int disconn;
 	public Login() {
 	}
 	
@@ -62,6 +63,16 @@ public class Login {
 		this.lon = lon;
 	}
 
+
+	public int getDisconn() {
+		return disconn;
+	}
+
+
+	public void setDisconn(int disconn) {
+		this.disconn = disconn;
+	}
+	
 	
 
 	

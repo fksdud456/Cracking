@@ -8,4 +8,5 @@ public interface Biz<T, S> {
 	public void insert(T t);
 	public void update(T t);
 	public List<T> find();
+	public void updateAll();
 }
