@@ -42,7 +42,7 @@ import java.util.concurrent.ExecutionException;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback{
 
-    private final String wcURL = "http://70.12.114.150/wc";
+    private final String wcURL = "http://70.12.114.144/wc";
 
     ArrayList<Location1> list;
 
@@ -342,7 +342,7 @@ public class MainActivity extends AppCompatActivity
 
         mMap.setMyLocationEnabled(true);
 
-        ReceiveData recvData = new ReceiveData(wcURL+"/location.do");
+        ReceiveData recvData = new ReceiveData(wcURL+"/location.do?comm=t");
 
         String res = null;
         try {
@@ -352,15 +352,32 @@ public class MainActivity extends AppCompatActivity
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+        list.clear();
         Util.getLocationFromJSON(list,res);
 
 
         for(int i=0; i<list.size(); i++) {
+
+            double latitude = Double.parseDouble(list.get(i).lat);
+            double longitude = Double.parseDouble(list.get(i).lon);
+
+            if(latitude>37.52 || latitude < 37.45 || longitude <127 || longitude> 127.06){
+                Log.d(null,"aaaaa");
+                recvData = new ReceiveData(wcURL+"/disconnect.do?comm=t&id="+list.get(i).id);
+                try {
+                    recvData.execute().get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                continue;
+            }
             LatLng m1 = new LatLng(Double.parseDouble(list.get(i).lat),Double.parseDouble(list.get(i).lon));
             mMap.addMarker(new MarkerOptions().position(m1).title(list.get(i).id));
         }
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 10));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 15));
 
 
     }
