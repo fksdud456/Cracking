@@ -173,6 +173,9 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
             tv_toggle.setText(temp);
             callSound(temp);
             threadFlag = false;
+
+            toggleTask = new ToggleTask("http://70.12.114.144/wc/data.do");
+            toggleTask.execute(id, getTv_toggle());
         }
     }
 
@@ -385,7 +388,6 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
 
     class ToggleTask extends AsyncTask<String, String, String> {
         String url;
-
         public ToggleTask() {
         }
 
@@ -400,8 +402,9 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
 
         @Override
         protected String doInBackground(String[] strings) {
-            String status = strings[0];
-            url += "?status=" + status;
+            String id = strings[0];
+            String status = strings[1];
+            url += "?comm=s&id="+id+"&status=" + status;
             StringBuilder sb = new StringBuilder();
             HttpURLConnection con = null;
             BufferedReader br = null;
@@ -440,19 +443,6 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
                 con.disconnect();
             }
             return sb.toString();
-        }
-
-
-        @Override
-        protected void onPostExecute(String s) {
-            Log.d("excute", s);
-            if (s.equals("1")) {
-                //Toast.makeText(MainActivity.this, "Login Success", Toast.LENGTH_SHORT).show();
-            } else if (s.equals("0")) {
-                //Toast.makeText(MainActivity.this, "Login Fail, Please try again", Toast.LENGTH_SHORT).show();
-            }
-            toggleTask = new ToggleTask("http://70.12.114.144/wc/data.do");
-            toggleTask.execute(getTv_toggle());
         }
     }
 
