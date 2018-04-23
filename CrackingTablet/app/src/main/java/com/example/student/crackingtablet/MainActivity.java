@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<User> allUser;
     private ArrayList<String> loginUser;
     private ArrayList<String> connUser;
+    private ArrayList<String> dataUser;
 
     private UserAdapter userAdapter; //home login user list
     private UserGridAdapter userGridAdapter; // management user grid view
@@ -113,12 +114,32 @@ public class MainActivity extends AppCompatActivity
         if (command.equals("conn")) {
             Log.d(TAG, "onNewIntent :: conn :: ");
             String res = intent.getStringExtra("res");
+
             connUser.clear();
             Util.getStringListFromJSON(connUser, res);
-            for(String id : connUser) {
-                userGridAdapter.setItemStatus(id, Util.CONN);
-            }
+
+            for(String id : connUser)
+                userGridAdapter.setOptionEnable(id, User.CONNECTION);
+        } else if(command.equals("login")) {
+            Log.d(TAG, "onNewIntent :: login :: ");
+            String res = intent.getStringExtra("res");
+
+            loginUser.clear();
+            Util.getStringListFromJSON(loginUser, res);
+
+            for(String id : loginUser)
+                userGridAdapter.setOptionEnable(id, User.LOGIN);
+        } else if(command.equals("data")) {
+            Log.d(TAG, "onNewIntent :: data :: ");
+            String res = intent.getStringExtra("res");
+
+            dataUser.clear();
+            Util.getStringListFromJSON(dataUser, res);
+
+            for(String id : dataUser)
+                userGridAdapter.setOptionEnable(id, User.MOTION);
         }
+        //userAdapter.notifyDataSetChanged();
 
         super.onNewIntent(intent);
     }
@@ -216,6 +237,7 @@ public class MainActivity extends AppCompatActivity
         allUser = new ArrayList<>();
         loginUser = new ArrayList<>();
         connUser = new ArrayList<>();
+        dataUser = new ArrayList<>();
 
         getAllUser();
         UpdateHomeLayout();
@@ -230,7 +252,6 @@ public class MainActivity extends AppCompatActivity
 
             if (res != null && !res.equals("")) {
                 allUserH.clear();
-                allUser.clear();
                 Util.getAllFromJSON(allUserH, res);
             }
 
@@ -267,6 +288,10 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (first) {
+            Log.d(TAG, "UpdateHomeLayout . . . list SIZE : " + list.size());
+
+
+
             userAdapter = new UserAdapter(list, this, container_h);
             ListView listView = findViewById(R.id.list_manage);
             listView.setAdapter(userAdapter);
@@ -281,14 +306,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void UpdateManagementList() {
+        Log.d(TAG, "UpdateManagementList");
         Util.setAllUser(allUserH, allUser, loginUser, connUser);
-        //Log.d(TAG, allUser.toString());
         userGridAdapter = new UserGridAdapter(allUser, this, container_m);
 
         gridView = (GridView)findViewById(R.id.grid_manage);
-        Toast.makeText(MainActivity.this, "좀 되라", Toast.LENGTH_LONG).show();
         gridView.setAdapter(userGridAdapter);
-
     }
 
     @Override

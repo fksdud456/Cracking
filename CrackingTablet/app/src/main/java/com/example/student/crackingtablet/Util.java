@@ -13,10 +13,6 @@ import java.util.Iterator;
 
 public class Util {
     private static final String TAG = "Util ::: ";
-    public static final int CONN = 1;
-    public static final int LOGIN = 1;
-    public static final int DISCONN = 0;
-
 
     public static void getListFromJSON(ArrayList<User> list, String josnString) {
         try {
@@ -26,7 +22,10 @@ public class Util {
 
                 // jo.toString("img")
                 int imgNum = 0;
-                list.add(new User(jo.getString("id"), "", jo.getString("name"), jo.getString("registdate"), imgNum, 0));
+                list.add(new User(jo.getString("id"),
+                        "", jo.getString("name"),
+                        jo.getString("registdate"),
+                        imgNum, 0));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -35,6 +34,11 @@ public class Util {
     }
 
     public static void getStringListFromJSON(ArrayList<String> list, String josnString) {
+        Log.d(TAG, "getStringListFromJSON :: "  +  josnString );
+
+        if(josnString.equals("") || josnString == null)
+            return;
+
         try {
             JSONArray ja = new JSONArray(josnString);
             for (int i = 0; i < ja.length(); i++) {
@@ -46,10 +50,14 @@ public class Util {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return;
     }
 
     public static void getAllFromJSON(HashMap<String, User> userMap,  String josnString) {
+        Log.d(TAG, "getAllFromJSON :: "  +  josnString );
+
+        if(josnString.equals("") || josnString == null)
+            return;
+
         User user;
         try {
             JSONArray ja = new JSONArray(josnString);
@@ -65,7 +73,6 @@ public class Util {
                         imgNum, 0);
                 userMap.put(jo.getString("id"),
                         user);
-                Log.d(TAG, "getAllFromJSON :: "  + user.toString());
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -77,16 +84,21 @@ public class Util {
         User user;
         for(String id : login) {
             user = listH.get(id);
-            user.setLogin(LOGIN);
-
+            if(user == null)
+                continue;
+            user.optionEnable(User.LOGIN);
             listH.put(id, user);
         }
+
         for(String id : conn) {
             user = listH.get(id);
-            user.setConn(CONN);
+            if(user == null)
+                continue;
 
+            user.optionEnable(User.CONNECTION);
             listH.put(id, user);
         }
+
 
         Log.d("listH.keySet()", listH.keySet().toString() +"" + listH.keySet().size());
         all.clear();

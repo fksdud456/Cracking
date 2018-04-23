@@ -69,9 +69,11 @@ public class UserGridAdapter extends BaseAdapter {
         TextView name = vw.findViewById(R.id.tv_name_m);
         TextView date = vw.findViewById(R.id.tv_loc_m);
         btn_disconnect = vw.findViewById(R.id.btn_disconnect);
+
         User user = list.get(i);
+
         //id 설정
-        if (user.getConn() == Util.CONN) {
+        if (user.isOptionEnabled(User.CONNECTION)) {
             id.setText(user.getId() + "[연결됨]");
         } else {
             id.setText(user.getId());
@@ -84,11 +86,12 @@ public class UserGridAdapter extends BaseAdapter {
             imgNum = user.getImg();
         img.setImageResource(imgNum);
 
-        if (user.getLogin() == Util.LOGIN) {
+        if (user.isOptionEnabled(User.LOGIN)){
             vw.setBackgroundResource(R.color.colorAccent);
         } else {
             vw.setBackgroundResource(R.color.common_google_signin_btn_text_light_disabled);
         }
+
 
         clickDisconnect(user.getId());
 
@@ -109,9 +112,12 @@ public class UserGridAdapter extends BaseAdapter {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         SendData sendData = new SendData(MainActivity.wcURL+"/disconnect.do?comm=t&id=" + idz);
                         sendData.execute();
-                        setItemStatus(idz, Util.DISCONN);
+                        setOptionDisable(idz, User.CONNECTION);
+                        setOptionDisable(idz, User.LOGIN);
+                        setOptionDisable(idz, User.MOTION);
                     }
                 });
+
                 builder.setNegativeButton("no", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -124,18 +130,22 @@ public class UserGridAdapter extends BaseAdapter {
         });
     }
 
-    public void setItemStatus(int i, int status) {
-        User user = list.get(i);
-        user.setConn(status);
-        list.set(i, user);
-    }
-
-    public void setItemStatus(String id, int status) {
+    public void setOptionEnable(String id, int status) {
         int index = map.get(id);
         User user = list.get(index);
-        user.setConn(status);
+        user.optionEnable(status);
 
         list.set(index, user);
+        notifyDataSetChanged();
     }
 
+    public void setOptionDisable(String id, int status) {
+        Log.d("setOptionDisable" , ":: "+ id);
+        int index = map.get(id);
+        User user = list.get(index);
+        user.optionDisable(status);
+
+        list.set(index, user);
+        notifyDataSetChanged();
+    }
 }

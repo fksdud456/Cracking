@@ -23,6 +23,14 @@ public class ReceiveData extends AsyncTask<String, String, String> {
         url += parameter;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     @Override
     protected String doInBackground(String... strings) {
         HttpURLConnection conn = null;
