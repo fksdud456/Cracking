@@ -2,6 +2,8 @@ package com.example.student.crackinggalaxy;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -15,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +37,7 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
     String strON = "ON";
     String strOFF = "OFF";
     String temp = "";
+    Switch switch1;
 
     SoundPool sound = new SoundPool(1, AudioManager.STREAM_ALARM, 0);
     int streamId;
@@ -53,6 +57,7 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control);
         tv_toggle = findViewById(R.id.tv_toggle);
+        switch1 = findViewById(R.id.switch1);
 
         threadFlag = true;
         deviceFlag = true;
@@ -66,6 +71,9 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
         intent = getIntent();
         id = intent.getStringExtra("id");
         Log.d("idCheck###########",id);
+
+        TextView tvId = findViewById(R.id.tv_userId);
+        tvId.setText("ID : " + id);
 
         latitude = ((Math.random()*(38.5-35.5+1))+35.5);
         longitude = ((Math.random()*(128.8-126.6+1))+126.6);
@@ -158,19 +166,29 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
         // 손을 치우면 아래와 같이 출력된다.
         // distance(8.0)
 
+
+        int color = getResources().getColor(R.color.colorPrimaryDark);
         if (threadFlag == true && dbDistance == 0.0) {
             if (temp.equals("")) {
                 temp = strON;
+                color = getResources().getColor(R.color.colorAccent);
+                switch1.setChecked(true);
             } else if (temp.equals(strON)) {
                 temp = strOFF;
+                switch1.setChecked(false);
             } else if (temp.equals(strOFF)) {
                 temp = strON;
-
+                color = getResources().getColor(R.color.colorAccent);
+                        //Color.parseColor("#cc33ff");
+                switch1.setChecked(true);
             }
             //Toast.makeText(this, "distance(" + dbDistance + ")" , Toast.LENGTH_SHORT).show();
             Log.d("Sensor", "distance(" + dbDistance + ")");
 
+
+            tv_toggle.setTextColor(color);
             tv_toggle.setText(temp);
+
             callSound(temp);
             threadFlag = false;
 

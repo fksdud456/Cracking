@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            finish();
             super.onBackPressed();
         }
     }
@@ -453,10 +454,15 @@ public class MainActivity extends AppCompatActivity
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 10));
     }
 
+
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy()");
         stopService(connIntent);
         stopService(dataIntent);
+
+        int pid = android.os.Process.myPid();
+        android.os.Process.killProcess(pid);
         super.onDestroy();
     }
 }
