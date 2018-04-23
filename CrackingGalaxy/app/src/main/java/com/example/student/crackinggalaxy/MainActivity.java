@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Login Fail, Please try again", Toast.LENGTH_SHORT).show();
             }
         }
-    }
+        }
     }
 
 
