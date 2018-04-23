@@ -4,32 +4,30 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity {
-
+    EditText et_id, et_pwd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        et_id= findViewById(R.id.et_id);
+        et_pwd = findViewById(R.id.et_pwd);
     }
 
     public void clickBtn(View v) {
         if (v.getId() == R.id.btn_login) {
-            if (requestLogin()) {
+            String id = et_id.getText().toString();
+            String pwd = et_pwd.getText().toString();
+            if(id.equals("admin") && pwd.equals("admin")){
                 successLogin();
-            } else {
+            }
+            else{
                 failLogin();
             }
         }
-    }
-
-    public boolean requestLogin() {
-        boolean result = true;
-
-
-        return result;
     }
 
     public void successLogin() {

@@ -30,11 +30,11 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service
+<<<<<<< HEAD
+            android:name=".MyService"
+=======
             android:name=".ConnService"
-            android:enabled="true"
-            android:exported="true" />
-        <service
-            android:name=".DataService"
+>>>>>>> a9a6b8baac6007bc34034b3b5cb4da77d538f747
             android:enabled="true"
             android:exported="true"></service>
     </application>

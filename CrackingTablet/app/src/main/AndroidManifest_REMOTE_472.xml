@@ -32,10 +32,6 @@
         <service
             android:name=".ConnService"
             android:enabled="true"
-            android:exported="true" />
-        <service
-            android:name=".DataService"
-            android:enabled="true"
             android:exported="true"></service>
     </application>
 
