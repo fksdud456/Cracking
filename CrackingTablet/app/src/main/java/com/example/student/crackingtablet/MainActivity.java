@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity
                 userGridAdapter.setOptionEnable(id, User.LOGIN);
 
             res = intent.getStringExtra("data");
+            Log.d(TAG, res);
             Util.getStringListFromJSON(dataUser, res);
 
             for (String id : dataUser)
@@ -222,7 +223,7 @@ public class MainActivity extends AppCompatActivity
 
         webView_chart.setWebViewClient(new WebViewClient());
         webView_chart.getSettings().setJavaScriptEnabled(true);
-        webView_chart.loadUrl(wcURL + "chart");
+        webView_chart.loadUrl(wcURL + "/chart.do?comm=w");
 
         l_home.setVisibility(View.VISIBLE);
         l_chart.setVisibility(View.INVISIBLE);

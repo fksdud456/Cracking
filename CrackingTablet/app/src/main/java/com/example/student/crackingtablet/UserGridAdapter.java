@@ -29,7 +29,7 @@ public class UserGridAdapter extends BaseAdapter {
     Context context;
     LinearLayout container;
     int status;
-    ImageButton btn_disconnect;
+    ImageView btn_disconnect;
 
     public UserGridAdapter() {
 
@@ -73,6 +73,7 @@ public class UserGridAdapter extends BaseAdapter {
         View vw = inflater.inflate(R.layout.user_management, container, true);
 
         ImageView img = vw.findViewById(R.id.imageView_profile_m);
+        ImageView data = vw.findViewById(R.id.imageView_data);
         TextView id = vw.findViewById(R.id.tv_id_m);
         TextView name = vw.findViewById(R.id.tv_name_m);
         TextView date = vw.findViewById(R.id.tv_loc_m);
@@ -82,29 +83,28 @@ public class UserGridAdapter extends BaseAdapter {
 
         //id 설정
         if (user.isOptionEnabled(User.CONNECTION)) {
-            id.setText(user.getId() + "[연결됨]");
+            id.setText(user.getId() + " [ connected ] ");
         } else {
             id.setText(user.getId());
         }
 
         name.setText(user.getName());
         date.setText(user.getRdate());
-        int imgNum = R.drawable.heart;
+        int imgNum = R.drawable.humanhead;
         if (user.getImg() != 0)
             imgNum = user.getImg();
         img.setImageResource(imgNum);
 
         if (user.isOptionEnabled(User.LOGIN)){
-            vw.setBackgroundResource(R.color.colorAccent);
+            vw.setBackgroundResource(R.color.white);
+            btn_disconnect.setImageResource(R.drawable.delete2);
         } else {
             vw.setBackgroundResource(R.color.common_google_signin_btn_text_light_disabled);
         }
 
         if (user.isOptionEnabled(User.MOTION)){
-            vw.setBackgroundResource(R.color.colorMotion);
+            data.setImageResource(R.drawable.pulse2);
         }
-
-
 
         clickDisconnect(user.getId());
 

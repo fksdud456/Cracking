@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container_m"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
     android:paddingBottom="10dp"
     android:paddingLeft="30dp"
-    android:paddingRight="30dp"
+    android:paddingRight="10dp"
     android:paddingTop="10dp">
 
 
@@ -16,13 +17,14 @@
         android:layout_width="100dp"
         android:layout_height="70dp"
         android:layout_weight="1"
-        app:srcCompat="@drawable/heart" />
+        app:srcCompat="@drawable/mask" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="3"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="5dp">
 
         <TextView
             android:id="@+id/tv_id_m"
@@ -30,7 +32,10 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="TextView" />
+            android:paddingLeft="5dp"
+            android:text="TextView"
+            android:textColorHighlight="@color/colorPrimary"
+            android:textSize="18sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -44,6 +49,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:gravity="center_vertical"
+                android:paddingLeft="5dp"
                 android:text="TextView" />
 
             <TextView
@@ -52,14 +58,21 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:gravity="center_vertical"
+                android:paddingLeft="5dp"
                 android:text="TextView" />
 
-            <ImageButton
-                android:id="@+id/btn_disconnect"
+            <ImageView
+                android:id="@+id/imageView_data"
                 android:layout_width="10dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/disconnect" />
+                android:layout_weight="3" />
+
+            <ImageView
+                android:id="@+id/btn_disconnect"
+                android:layout_width="10dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:layout_weight="3" />
         </LinearLayout>
     </LinearLayout>
 

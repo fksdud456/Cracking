@@ -59,7 +59,7 @@ public class UserAdapter extends BaseAdapter {
         id.setText(user.getId());
         name.setText(user.getName());
         date.setText(user.getRdate());
-        int imgNum = R.drawable.heart;
+        int imgNum = R.drawable.humanhead;
 
         if (user.getImg() != 0)
             imgNum = user.getImg();
