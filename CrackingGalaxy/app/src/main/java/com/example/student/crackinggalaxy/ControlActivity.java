@@ -47,6 +47,7 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
     double latitude; //35.5~38.5
     double longitude; // 126.6~128.8
     String result;
+    Thread t1,t2,t3,t4;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,28 +60,49 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);   // PROXIMITY센서를 호출한다.
 
         new Thread(r1).start();
+        new Thread(r).start();
 
         intent = new Intent();
         intent = getIntent();
         id = intent.getStringExtra("id");
-        new Thread(r).start();
         Log.d("idCheck###########",id);
+
         latitude = ((Math.random()*(38.5-35.5+1))+35.5);
         longitude = ((Math.random()*(128.8-126.6+1))+126.6);
-
         String lat = String.valueOf(latitude);
         String lon = String.valueOf(longitude);
+
         locationTask = new LocationTask("http://70.12.114.144/wc/location.do");
         locationTask.execute(lat, lon, id);
-        Log.d("idCheck###########", id);
+
+        t1 = new Thread(chk_disconnect);
+        t1.start();
     }
+
+    Runnable chk_disconnect = new Runnable() {
+        @Override
+        public void run() {
+            while (!t1.currentThread().isInterrupted()) {
+                try {
+                    Thread.sleep(3000);
+                    DisconnectTask disconnectTask = new DisconnectTask("http://70.12.114.144/wc/disconnect.do");
+                    disconnectTask.execute(id);
+
+            } catch(Exception e){
+                e.printStackTrace();
+                Thread.currentThread().interrupt();
+            }
+       }
+    }
+    };
+
 
     Runnable r1 = new Runnable() {
         @Override
         public void run() {
             while (true) {
                 threadFlag = true;
-                Log.d("Thread.....", "Running....." + threadFlag);
+                //Log.d("Thread.....", "Running....." + threadFlag);
 
                 try {
                     Thread.sleep(300);
@@ -88,7 +110,7 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
                     e.printStackTrace();
                 }
                 threadFlag = false;
-                Log.d("Thread.....", "Running....." + threadFlag);
+                //Log.d("Thread.....", "Running....." + threadFlag);
 
             }
         }
@@ -120,8 +142,8 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
 
     @Override
     protected void onPause() {
-        super.onPause();
         sensorManager.unregisterListener(this);
+        super.onPause();
     }
 
     @Override
@@ -163,7 +185,70 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
         }
         streamId = sound.play(soundId, 0.5F, 0.5F, 1, 0, 1.0F);
     }
-    
+
+    class DisconnectTask extends  AsyncTask<String, Void, String>{
+        String url="";
+        public DisconnectTask() {}
+        public DisconnectTask(String url){
+            this.url= url;
+        }
+
+        @Override
+        protected String doInBackground(String[] strs) {
+            String id = strs[0];
+            url += "?comm=s&id="+id;
+            StringBuilder sb = new StringBuilder();
+            HttpURLConnection con = null;
+            BufferedReader br = null;
+            //http통신
+            try{
+                URL url = new URL(this.url);
+                con = (HttpURLConnection)url.openConnection();
+                if(con!=null){
+                    con.setReadTimeout(10000); //제한시간
+                    con.setRequestMethod("GET");
+                    con.setRequestProperty("Accept","*/*");
+                    if(con.getResponseCode()!=HttpURLConnection.HTTP_OK)
+                        return null;
+                    br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                    String line = null;
+                    while(true){
+                        line=br.readLine();
+                        if(line==null)
+                            break;
+                        sb.append(line);
+                    }
+                }
+            }
+            catch (Exception e){
+                Log.d("errorCheck",e.getMessage());
+            }
+            finally {
+                try{
+                    if(br!=null)
+                        br.close();
+                }
+                catch (IOException e){
+                    e.printStackTrace();
+                }
+                con.disconnect();
+            }
+            return sb.toString();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            Log.d("disdischkchk$$$", s);
+            if (s.equals("1")) {
+                onBackPressed();
+            }
+            else if(s==null){
+                //return;
+                Log.d("disdischkchk$$$", "no signal");
+            }
+        }
+    }
+
     class LocationTask extends AsyncTask<String, Void, String>{
         String url="";
         public LocationTask() {}
@@ -316,13 +401,10 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
         @Override
         protected String doInBackground(String[] strings) {
             String status = strings[0];
-
-
             url += "?status=" + status;
             StringBuilder sb = new StringBuilder();
             HttpURLConnection con = null;
             BufferedReader br = null;
-
             //http통신
             try {
                 Log.d("try check############", url);
@@ -339,7 +421,6 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
                     String line = null;
                     while (true) {
                         Log.d("while check############", this.url);
-
                         line = br.readLine();
                         if (line == null)
                             break;
@@ -394,13 +475,30 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
                     return;
             }
 
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             con.disconnect();
         }
 
+        t1.interrupt();
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d("onDestroy", "please kill me");
+        t1.interrupt();
+
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Thread.currentThread().interrupt();
+        }
+
+        super.onDestroy();
     }
 
     public String getTv_toggle() {
