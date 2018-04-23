@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -33,7 +34,7 @@ public class UserGridAdapter extends BaseAdapter {
 
     }
 
-    public UserGridAdapter(ArrayList<User> list, Context context, LinearLayout container) {
+    public UserGridAdapter(ArrayList<User> list, final Context context, LinearLayout container) {
         this.list = list;
         this.context = context;
         this.container = container;
@@ -56,10 +57,11 @@ public class UserGridAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        View vw = null;
-
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        vw = inflater.inflate(R.layout.user_management, container, true);
+        View vw = inflater.inflate(R.layout.user_management, container, true);
+
+        setListner();
+
 
         ImageView img = vw.findViewById(R.id.imageView_profile_m);
         TextView id = vw.findViewById(R.id.tv_id_m);

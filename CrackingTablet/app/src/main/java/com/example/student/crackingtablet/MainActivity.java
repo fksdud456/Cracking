@@ -3,7 +3,6 @@ package com.example.student.crackingtablet;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -26,7 +25,6 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,7 +35,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.util.ArrayList;
@@ -49,7 +46,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     private final String TAG = "MainActivity:::";
-    private final String wcURL = "http://70.12.114.150/wc";
+    private final String wcURL = "http://70.12.114.144/wc";
     private LinearLayout l_home, l_chart, l_management, l_map, container_h, container_m;
     private WebView webView_chart;
     private GoogleMap mMap;
@@ -58,8 +55,11 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<String> loginUser;
     private ArrayList<String> connUser;
 
+
     private UserAdapter userAdapter; //home 화면 리스트
-    private Intent connService;
+    private UserAdapter userAdapter;
+    private Intent connIntent;
+
     private boolean first = true;
     private boolean flag = true;
     private ReceiveData connectionReceiver;
@@ -117,9 +117,11 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        connIntent = new Intent(this, ConnService.class);
+        startService(connIntent);
 
-        connService = new Intent(MainActivity.this, ConnectionService.class);
-        startService(connService);
+        gridView = findViewById(R.id.grid_manage);
+
         first = true;
         makeUI();
         first = false;
@@ -138,7 +140,7 @@ public class MainActivity extends AppCompatActivity
             String res = intent.getStringExtra("res");
             connUser.clear();
             Util.getStringListFromJSON(connUser, res);
-            Log.d(TAG, "conn " + res);
+            Log.d(TAG, ":::::::::::::::::::::::::::::::: conn " + res);
         }
 
         super.onNewIntent(intent);
@@ -252,7 +254,7 @@ public class MainActivity extends AppCompatActivity
             if (res != null && !res.equals("")) {
                 allUserH.clear();
                 allUser.clear();
-                Util.getAllFromJSON(allUserH, allUser, res);
+                Util.getAllFromJSON(allUserH, res);
             }
 
         } catch (InterruptedException e) {
@@ -305,6 +307,7 @@ public class MainActivity extends AppCompatActivity
         Util.setAllUser(allUserH, allUser, loginUser, connUser);
         //Log.d(TAG, allUser.toString());
         UserGridAdapter userGridAdapter = new UserGridAdapter(allUser, this, container_m);
+
         gridView = (GridView)findViewById(R.id.grid_manage);
         Toast.makeText(MainActivity.this, "좀 되라", Toast.LENGTH_LONG).show();
         gridView.setAdapter(userGridAdapter);
@@ -332,7 +335,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        stopService(connService);
+        stopService(connIntent);
         super.onDestroy();
     }
 
