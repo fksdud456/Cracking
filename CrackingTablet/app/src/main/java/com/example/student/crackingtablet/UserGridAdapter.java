@@ -39,6 +39,10 @@ public class UserGridAdapter extends BaseAdapter {
         this.list = list;
     }
 
+    public ArrayList<User> getList() {
+        return list;
+    }
+
     public UserGridAdapter(ArrayList<User> list, final Context context, LinearLayout container) {
         map = new HashMap<>();
         this.list = list;
@@ -121,9 +125,7 @@ public class UserGridAdapter extends BaseAdapter {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         SendData sendData = new SendData(MainActivity.wcURL+"/disconnect.do?comm=t&id=" + idz);
                         sendData.execute();
-                        setOptionDisable(idz, User.CONNECTION);
-                        setOptionDisable(idz, User.LOGIN);
-                        setOptionDisable(idz, User.MOTION);
+                        setOptionDisable(idz, User.CONNECTION|User.LOGIN|User.MOTION);
                     }
                 });
 
@@ -156,6 +158,15 @@ public class UserGridAdapter extends BaseAdapter {
 
         list.set(index, user);
         notifyDataSetChanged();
+    }
+
+    public void setOptionDisableAll() {
+        Log.d("setOptionDisableAll" , ":: ");
+
+        for(User user : list) {
+            user.optionDisable(User.MOTION | User.LOGIN | User.CONNECTION);
+            list.set(map.get(user.getId()), user);
+        }
     }
 
 }

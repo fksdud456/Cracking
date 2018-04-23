@@ -79,7 +79,23 @@ public class Util {
         return;
     }
 
-    public static void setAllUser(HashMap<String, User> listH,  ArrayList<User> all, ArrayList<String> login, ArrayList<String> conn) {
+    public static void getLocationFromJSON(ArrayList<Location1> list, String josnString) {
+        try {
+            JSONArray ja = new JSONArray(josnString);
+            for (int i = 0; i < ja.length(); i++) {
+                JSONObject jo = ja.getJSONObject(i);
+
+                // jo.toString("img")
+                int imgNum = 0;
+                list.add(new Location1(jo.getString("id"), jo.getString("lon"), jo.getString("lat")));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return;
+    }
+
+    public static void setAllUser(HashMap<String, User> listH,  ArrayList<User> all, ArrayList<String> login, ArrayList<String> conn, ArrayList<String> data) {
         User user;
         for(String id : login) {
             user = listH.get(id);
@@ -98,6 +114,14 @@ public class Util {
             listH.put(id, user);
         }
 
+        for(String id : data) {
+            user = listH.get(id);
+            if(user == null)
+                continue;
+
+            user.optionEnable(User.MOTION);
+            listH.put(id, user);
+        }
 
         Log.d("listH.keySet()", listH.keySet().toString() +"" + listH.keySet().size());
         all.clear();
@@ -108,19 +132,39 @@ public class Util {
         return;
     }
 
-    public static void getLocationFromJSON(ArrayList<Location1> list, String josnString) {
-        try {
-            JSONArray ja = new JSONArray(josnString);
-            for (int i = 0; i < ja.length(); i++) {
-                JSONObject jo = ja.getJSONObject(i);
-
-                // jo.toString("img")
-                int imgNum = 0;
-                list.add(new Location1(jo.getString("id"), jo.getString("lon"), jo.getString("lat")));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+    public static  ArrayList<User> getAllUser(HashMap<String, User> listH, ArrayList<String> login, ArrayList<String> conn, ArrayList<String> data) {
+        User user;
+        for(String id : login) {
+            user = listH.get(id);
+            if(user == null)
+                continue;
+            user.optionEnable(User.LOGIN);
+            listH.put(id, user);
         }
-        return;
+
+        for(String id : conn) {
+            user = listH.get(id);
+            if(user == null)
+                continue;
+
+            user.optionEnable(User.CONNECTION);
+            listH.put(id, user);
+        }
+
+        for(String id : data) {
+            user = listH.get(id);
+            if(user == null)
+                continue;
+
+            user.optionEnable(User.MOTION);
+            listH.put(id, user);
+        }
+
+        ArrayList<User> all = new ArrayList<>();
+        for ( String key : listH.keySet() ) {
+            all.add(listH.get(key));
+        }
+
+        return all;
     }
 }

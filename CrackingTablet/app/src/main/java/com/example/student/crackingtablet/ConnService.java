@@ -57,27 +57,25 @@ public class ConnService extends Service {
                         e.printStackTrace();
                     }
 
-
                     try {
+                        sintent.putExtra("command", "connservice");
+
                         connectionReceiver = new ReceiveData(wcURL+"/connection.do");
                         connectionReceiver.addParameter("?comm=t");
                         String res = connectionReceiver.execute().get();
-                        sintent.putExtra("command", "conn");
-                        sintent.putExtra("res", res);
-                        startActivity(sintent);
+                        sintent.putExtra("conn", res);
+
 
                         connectionReceiver = new ReceiveData(wcURL+"/loginuser.do");
                         connectionReceiver.addParameter("?comm=t");
                         res = connectionReceiver.execute().get();
-                        sintent.putExtra("command", "login");
-                        sintent.putExtra("res", res);
-                        startActivity(sintent);
+                        sintent.putExtra("login", res);
 
                         connectionReceiver = new ReceiveData(wcURL+"/data.do");
                         connectionReceiver.addParameter("?comm=t");
                         res = connectionReceiver.execute().get();
-                        sintent.putExtra("command", "data");
-                        sintent.putExtra("res", res);
+                        sintent.putExtra("data", res);
+
                         startActivity(sintent);
                     } catch (InterruptedException e) {
                         e.printStackTrace();

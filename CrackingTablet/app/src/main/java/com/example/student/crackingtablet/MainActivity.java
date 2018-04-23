@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity
     private WebView webView_chart;
     private GoogleMap mMap;
     private HashMap<String, User> allUserH;
-    private ArrayList<User> allUser;
     private ArrayList<String> loginUser;
     private ArrayList<String> connUser;
     private ArrayList<String> dataUser;
@@ -61,6 +60,7 @@ public class MainActivity extends AppCompatActivity
     private UserAdapter userAdapter; //home login user list
     private UserGridAdapter userGridAdapter; // management user grid view
     private Intent connIntent;
+
 
     String id;
     GridView gridView;
@@ -106,35 +106,35 @@ public class MainActivity extends AppCompatActivity
         String command = intent.getStringExtra("command");
 
         // connection.do
-        if (command.equals("conn")) {
-            Log.d(TAG, "onNewIntent :: conn :: ");
-            String res = intent.getStringExtra("res");
+        if (command.equals("connservice")) {
+            Log.d(TAG, "onNewIntent :: connservice :: ");
+
+            userGridAdapter.setOptionDisableAll();
 
             connUser.clear();
+            loginUser.clear();
+            dataUser.clear();
+
+            String res = intent.getStringExtra("conn");
             Util.getStringListFromJSON(connUser, res);
 
             for (String id : connUser)
                 userGridAdapter.setOptionEnable(id, User.CONNECTION);
-        } else if (command.equals("login")) {
-            Log.d(TAG, "onNewIntent :: login :: ");
-            String res = intent.getStringExtra("res");
 
-            loginUser.clear();
+            res = intent.getStringExtra("login");
             Util.getStringListFromJSON(loginUser, res);
 
             for (String id : loginUser)
                 userGridAdapter.setOptionEnable(id, User.LOGIN);
-        } else if (command.equals("data")) {
-            Log.d(TAG, "onNewIntent :: data :: ");
-            String res = intent.getStringExtra("res");
 
-            dataUser.clear();
+            res = intent.getStringExtra("data");
             Util.getStringListFromJSON(dataUser, res);
 
             for (String id : dataUser)
                 userGridAdapter.setOptionEnable(id, User.MOTION);
+
+            userGridAdapter.notifyDataSetChanged();
         }
-        //userAdapter.notifyDataSetChanged();
 
         super.onNewIntent(intent);
     }
@@ -230,7 +230,6 @@ public class MainActivity extends AppCompatActivity
         l_map.setVisibility(View.INVISIBLE);
 
         allUserH = new HashMap<>();
-        allUser = new ArrayList<>();
         loginUser = new ArrayList<>();
         connUser = new ArrayList<>();
         dataUser = new ArrayList<>();
@@ -238,11 +237,12 @@ public class MainActivity extends AppCompatActivity
 
         getAllUser();
 
-        userAdapter = new UserAdapter(getLoginUser(), this, container_h);
+        ArrayList<User> loginUser = getLoginUser();
+        userAdapter = new UserAdapter(loginUser, this, container_h);
         ListView listView = findViewById(R.id.list_manage);
         listView.setAdapter(userAdapter);
 
-        userGridAdapter = new UserGridAdapter(allUser, this, container_m);
+        userGridAdapter = new UserGridAdapter(new ArrayList<User>(), this, container_m);
         gridView = (GridView) findViewById(R.id.grid_manage);
         gridView.setAdapter(userGridAdapter);
     }
@@ -269,46 +269,46 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<User> getLoginUser() {
         Log.d(TAG, "UpdateHomeLayout . . .");
 
-        ArrayList<User> list = new ArrayList<>();
-
         ReceiveData receiveData = new ReceiveData(wcURL + "/loginuser.do");
         receiveData.addParameter("?comm=t");
 
+        String res = "";
         try {
-            String res = receiveData.execute().get();
-            Log.d(TAG, "UpdateHomeLayout . . . res : " + res);
-            loginUser.clear();
-            if (res != null && !res.equals("")) {
-                Util.getStringListFromJSON(loginUser, res);
-            }
+            res = receiveData.execute().get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        for (String id : loginUser) {
-            list.add(allUserH.get(id));
+
+        ArrayList<User> list = new ArrayList<>();
+        loginUser.clear();
+        if (res == null || res.equals("")) {
+            Toast.makeText(this, "No one has logined", Toast.LENGTH_SHORT);
+        } else {
+            Util.getStringListFromJSON(loginUser, res);
+            for (String id : loginUser) {
+                list.add(allUserH.get(id));
+            }
         }
         return list;
     }
 
     private void UpdateHomeLayout() {
+        Log.d(TAG, "UpdateHomeLayout()");
+
         userAdapter.setList(getLoginUser());
         userAdapter.notifyDataSetChanged();
-
-        if (list.size() == 0) {
-            Toast.makeText(this, "No one has logined", Toast.LENGTH_SHORT);
-        }
     }
 
     private void UpdateManagementList() {
-        Log.d(TAG, "UpdateManagementList");
-        Util.setAllUser(allUserH, allUser, loginUser, connUser);
-        userGridAdapter.setList(allUser);
+        Log.d(TAG, "UpdateManagementList()");
+        getAllUser();
+        userGridAdapter.setList(Util.getAllUser(allUserH, loginUser, connUser, dataUser));
         userGridAdapter.notifyDataSetChanged();
 
         if (list.size() == 0) {
-            Toast.makeText(this, "No one has logined", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "No user", Toast.LENGTH_SHORT);
         }
     }
 
