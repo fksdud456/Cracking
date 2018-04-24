@@ -8,7 +8,7 @@ import android.util.Log;
 import java.util.concurrent.ExecutionException;
 
 public class ConnService extends Service {
-    private final String TAG = "ConnectionService ::";
+    private final String TAG = "ConnService ::";
     private final String wcURL = "http://70.12.114.144/wc";
 
     private ReceiveData connectionReceiver;
