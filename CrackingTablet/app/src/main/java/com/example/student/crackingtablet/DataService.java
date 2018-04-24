@@ -9,7 +9,6 @@ import java.util.concurrent.ExecutionException;
 
 public class DataService extends Service {
     private final String TAG = "DataService ::";
-    private final String wcURL = "http://70.12.114.144/wc";
 
     private ReceiveData connectionReceiver;
     private boolean flag = true;
@@ -31,7 +30,7 @@ public class DataService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG , "onStartCommand");
+        Log.d(TAG, "onStartCommand");
         if (intent == null) {
             return Service.START_STICKY;
         } else {
@@ -47,7 +46,7 @@ public class DataService extends Service {
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                while(flag) {
+                while (flag) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
@@ -57,7 +56,7 @@ public class DataService extends Service {
                     try {
                         sintent.putExtra("command", "dataservice");
 
-                        connectionReceiver = new ReceiveData(wcURL+"/data.do");
+                        connectionReceiver = new ReceiveData("/data.do");
                         connectionReceiver.addParameter("?comm=t");
                         String res = connectionReceiver.execute().get();
                         sintent.putExtra("data", res);

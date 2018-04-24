@@ -12,6 +12,7 @@ import java.util.HashMap;
 
 public class Util {
     private static final String TAG = "Util ::: ";
+    public static final String wcURL = "http://70.12.114.144/wc";
 
     public static void getListFromJSON(ArrayList<User> list, String josnString) {
         try {
