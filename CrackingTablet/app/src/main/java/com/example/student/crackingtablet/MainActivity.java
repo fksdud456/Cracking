@@ -99,8 +99,6 @@ public class MainActivity extends AppCompatActivity
         gridView = findViewById(R.id.grid_manage);
 
         makeUI();
-
-        UpdateManagementList();
     }
 
     @Override

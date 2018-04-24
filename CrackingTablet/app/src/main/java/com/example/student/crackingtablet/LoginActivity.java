@@ -19,8 +19,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public void clickBtn(View v) {
         if (v.getId() == R.id.btn_login) {
-            String id = et_id.getText().toString();
-            String pwd = et_pwd.getText().toString();
+            String id = et_id.getText().toString().trim();
+            String pwd = et_pwd.getText().toString().trim();
             if(id.equals("admin") && pwd.equals("admin")){
                 successLogin();
             }
