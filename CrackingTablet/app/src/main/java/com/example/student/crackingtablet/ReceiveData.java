@@ -11,12 +11,8 @@ import java.net.URL;
 public class ReceiveData extends AsyncTask<String, String, String> {
     String url;
 
-    ReceiveData() {
-
-    }
-
     ReceiveData(String url) {
-        this.url = url;
+        this.url = Util.wcURL + url;
     }
 
     public void addParameter(String parameter) {
@@ -72,7 +68,7 @@ public class ReceiveData extends AsyncTask<String, String, String> {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if(conn!= null)
+            if (conn != null)
                 conn.disconnect();
         }
         return sb.toString();

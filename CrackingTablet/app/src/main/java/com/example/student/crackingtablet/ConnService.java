@@ -8,8 +8,7 @@ import android.util.Log;
 import java.util.concurrent.ExecutionException;
 
 public class ConnService extends Service {
-    private final String TAG = "ConnectionService ::";
-    private final String wcURL = "http://70.12.114.144/wc";
+    private final String TAG = "ConnService ::";
 
     private ReceiveData connectionReceiver;
     private boolean flag = true;
@@ -31,7 +30,7 @@ public class ConnService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG , "onStartCommand");
+        Log.d(TAG, "onStartCommand");
         if (intent == null) {
             return Service.START_STICKY;
         } else {
@@ -50,7 +49,7 @@ public class ConnService extends Service {
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                while(flag) {
+                while (flag) {
                     try {
                         Thread.sleep(5000);
                     } catch (InterruptedException e) {
@@ -60,13 +59,13 @@ public class ConnService extends Service {
                     try {
                         sintent.putExtra("command", "connservice");
 
-                        connectionReceiver = new ReceiveData(wcURL+"/connection.do");
+                        connectionReceiver = new ReceiveData("/connection.do");
                         connectionReceiver.addParameter("?comm=t");
                         String res = connectionReceiver.execute().get();
                         sintent.putExtra("conn", res);
 
 
-                        connectionReceiver = new ReceiveData(wcURL+"/loginuser.do");
+                        connectionReceiver = new ReceiveData("/loginuser.do");
                         connectionReceiver.addParameter("?comm=t");
                         res = connectionReceiver.execute().get();
                         sintent.putExtra("login", res);

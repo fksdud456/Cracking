@@ -44,8 +44,6 @@ import java.util.concurrent.ExecutionException;
 //implements OnMapReadyCallback
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
-
-    public static final String wcURL = "http://70.12.114.144/wc";
     private final String TAG = "MainActivity:::";
 
     private LinearLayout l_home, l_chart, l_management, l_map, container_h, container_m;
@@ -101,8 +99,6 @@ public class MainActivity extends AppCompatActivity
         gridView = findViewById(R.id.grid_manage);
 
         makeUI();
-
-        UpdateManagementList();
     }
 
     @Override
@@ -231,7 +227,7 @@ public class MainActivity extends AppCompatActivity
 
         webView_chart.setWebViewClient(new WebViewClient());
         webView_chart.getSettings().setJavaScriptEnabled(true);
-        webView_chart.loadUrl(wcURL + "/chart.do?comm=w");
+        webView_chart.loadUrl(Util.wcURL + "/chart.do?comm=w");
 
         l_home.setVisibility(View.VISIBLE);
         l_chart.setVisibility(View.INVISIBLE);
@@ -258,7 +254,7 @@ public class MainActivity extends AppCompatActivity
 
     private void getAllUser() {
         try {
-            ReceiveData receiveData = new ReceiveData(wcURL + "/alluser.do");
+            ReceiveData receiveData = new ReceiveData("/alluser.do");
             receiveData.addParameter("?comm=t");
             String res = receiveData.execute().get();
             Log.d(TAG, "getAllUser . . . res : " + res);
@@ -278,7 +274,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<User> getLoginUser() {
         Log.d(TAG, "UpdateHomeLayout . . .");
 
-        ReceiveData receiveData = new ReceiveData(wcURL + "/loginuser.do");
+        ReceiveData receiveData = new ReceiveData("/loginuser.do");
         receiveData.addParameter("?comm=t");
 
         String res = "";
@@ -423,7 +419,7 @@ public class MainActivity extends AppCompatActivity
 
         mMap.setMyLocationEnabled(true);
 
-        ReceiveData recvData = new ReceiveData(wcURL + "/location.do?comm=t");
+        ReceiveData recvData = new ReceiveData("/location.do?comm=t");
 
         String res = null;
         try {
@@ -442,8 +438,7 @@ public class MainActivity extends AppCompatActivity
             double longitude = Double.parseDouble(list.get(i).lon);
 
             if (latitude > 40 || latitude < 34 || longitude > 130 || longitude < 125) {
-                Log.d(null, "aaaaa");
-                SendData sendData = new SendData(wcURL + "/disconnect.do?comm=t&id=" + list.get(i).id);
+                SendData sendData = new SendData("/disconnect.do?comm=t&id=" + list.get(i).id);
                 sendData.execute();
                 continue;
             }

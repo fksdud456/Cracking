@@ -8,12 +8,8 @@ import java.net.URL;
 public class SendData extends AsyncTask<String, String, Void> {
     String url;
 
-    SendData() {
-
-    }
-
     SendData(String url) {
-        this.url = url;
+        this.url = Util.wcURL + url;
     }
 
     public void setParameter(String parameter) {
@@ -38,7 +34,7 @@ public class SendData extends AsyncTask<String, String, Void> {
         } catch (Exception e) {
             return null;
         } finally {
-            if(conn!= null)
+            if (conn != null)
                 conn.disconnect();
         }
         return null;

@@ -123,7 +123,7 @@ public class UserGridAdapter extends BaseAdapter {
                 builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        SendData sendData = new SendData(MainActivity.wcURL+"/disconnect.do?comm=t&id=" + idz);
+                        SendData sendData = new SendData("/disconnect.do?comm=t&id=" + idz);
                         sendData.execute();
                         setOptionDisable(idz, User.CONNECTION|User.LOGIN|User.MOTION);
                     }
